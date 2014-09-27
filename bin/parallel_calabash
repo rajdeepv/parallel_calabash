@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path("../../lib", __FILE__)
+require "parallel_calabash"
+require 'parallel_calabash/version'
+require 'optparse'
+
+def parse_arguments(arguments)
+  options = {}
+  opt_parser = OptionParser.new do |opt|
+    opt.banner = "Usage: parallel_calabash [options]\n" \
+                "Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/"
+
+    opt.on("-h", "--help", "Show this message") do
+      puts opt
+      exit
+    end
+
+    opt.on("-v", "--version", "Show version") do
+      puts ParallelCalabash::VERSION
+      exit
+    end
+
+    opt.on("-a", "--apk apk_path", "apk file path") do |apk_path|
+      options[:apk_path] = apk_path
+    end
+
+    opt.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
+       options[:cucumber_options] = cucumber_opts
+    end
+
+  end
+
+  opt_parser.parse!(arguments)
+  options[:feature_folder] = arguments
+  options
+rescue OptionParser::InvalidOption
+  puts "Invalid arguments "
+  puts opt_parser.help
+end
+
+options = parse_arguments(ARGV)
+
+ParallelCalabash.run options
+
+
