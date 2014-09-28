@@ -7,17 +7,17 @@ module ParallelCalabash
 
       def run_tests(test_files, process_number, options)
         cmd = [base_command, options[:apk_path], options[:cucumber_options], *test_files].compact*' '
-        execute_command_for_process(process_number, cmd, options[:serialize_stdout])
+        execute_command_for_process(process_number, cmd, options[:mute_output])
       end
 
       def execute_command_for_process(process_number, cmd, silence)
-        command_for_current_process = command_for_process(process_number,cmd)
-        output = open("|#{command_for_current_process}", "r") { |output| capture_output(output, silence) }
+        command_for_current_process = command_for_process(process_number, cmd)
+        output = open("|#{command_for_current_process}", "r") { |output| show_output(output, silence) }
         exitstatus = $?.exitstatus
         {:stdout => output, :exit_status => exitstatus}
       end
 
-      def command_for_process process_number,cmd
+      def command_for_process process_number, cmd
         env = {}
         device_for_current_process = ParallelCalabash::AdbHelper.device_for_process process_number
         env = env.merge({'AUTOTEST' => '1', 'ADB_DEVICE_ARG' => device_for_current_process, "TEST_PROCESS_NUMBER" => (process_number+1).to_s})
@@ -26,16 +26,27 @@ module ParallelCalabash
         exports + separator + cmd
       end
 
-      def capture_output(out, silence)
+      def show_output(output, silence)
+        silence ? show_output_after_process_completion(output) : show_runtime_output(output)
+      end
+
+      def show_output_after_process_completion output
+        result = ""
+        output.read.split("\n").each do |l|
+          result << l
+          puts l
+        end
+        result
+      end
+
+      def show_runtime_output output
         result = ""
         loop do
           begin
-            read = out.readpartial(1000000) # read whatever chunk we can get
+            read = output.readpartial(1000000) # read whatever chunk we can get
             result << read
-            unless silence
-              $stdout.print read
-              $stdout.flush
-            end
+            $stdout.print read
+            $stdout.flush
           end
         end rescue EOFError
         result

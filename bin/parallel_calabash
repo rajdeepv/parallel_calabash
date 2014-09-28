@@ -7,26 +7,30 @@ require 'optparse'
 
 def parse_arguments(arguments)
   options = {}
-  opt_parser = OptionParser.new do |opt|
-    opt.banner = "Usage: parallel_calabash [options]\n" \
+  opt_parser = OptionParser.new do |opts|
+    opts.banner = "Usage: parallel_calabash [options]\n" \
                 "Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/"
 
-    opt.on("-h", "--help", "Show this message") do
-      puts opt
+    opts.on("-h", "--help", "Show this message") do
+      puts opts
       exit
     end
 
-    opt.on("-v", "--version", "Show version") do
+    opts.on("-v", "--version", "Show version") do
       puts ParallelCalabash::VERSION
       exit
     end
 
-    opt.on("-a", "--apk apk_path", "apk file path") do |apk_path|
+    opts.on("-a", "--apk apk_path", "apk file path") do |apk_path|
       options[:apk_path] = apk_path
     end
 
-    opt.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
-       options[:cucumber_options] = cucumber_opts
+    opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
+      options[:cucumber_options] = cucumber_opts
+    end
+
+    opts.on("--serialize-stdout", "Serialize stdout output, nothing will be written until everything is done") do |mute_output|
+      options[:mute_output] = mute_output
     end
 
   end
