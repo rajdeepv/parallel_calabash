@@ -1,9 +1,3 @@
-require_relative 'adb_helper'
-require 'shellwords'
-require "rbconfig"
-require 'rake/dsl_definition'
-require 'rake'
-
 module ParallelCalabash
   class Runner
     class << self
@@ -12,50 +6,24 @@ module ParallelCalabash
       end
 
       def run_tests(test_files, process_number, options)
-        combined_scenarios = test_files
-
-        sanitized_test_files = combined_scenarios.map { |val| WINDOWS ? "\"#{val}\"" : Shellwords.escape(val) }
-
-        options[:env] ||= {}
-        options[:env] = options[:env].merge({'AUTOTEST' => '1'}) if $stdout.tty? # display color when we are in a terminal
-
-
-        cmd = [
-            base_command,
-            options[:apk_path],
-            options[:cucumber_options],
-            *sanitized_test_files
-        ].compact.join(' ')
-        device_for_current_process = ParallelCalabash::AdbHelper.device_for_process process_number
-        cmd = cmd + " ADB_DEVICE_ARG=#{device_for_current_process}"
-        p cmd
-        execute_command(cmd, process_number, options)
+        cmd = [base_command, options[:apk_path], options[:cucumber_options], *test_files].compact*' '
+        execute_command_for_process(process_number, cmd, options[:serialize_stdout])
       end
 
-      def execute_command(cmd, process_number, options)
-        env = (options[:env] || {}).merge(
-            "TEST_PROCESS_NUMBER" => (process_number+1).to_s
-        )
-        cmd = "nice #{cmd}" if options[:nice]
-        execute_command_and_capture_output(env, cmd, options[:serialize_stdout])
-      end
-
-      def execute_command_and_capture_output(env, cmd, silence)
-        # make processes descriptive / visible in ps -ef
-        separator = (WINDOWS ? ' & ' : ';')
-        exports = env.map do |k,v|
-          # if WINDOWS
-          #   "(SET \"#{k}=#{v}\")"
-          # else
-            "#{k}=#{v};export #{k}"
-          # end
-        end.join(separator)
-        cmd = "#{exports}#{separator}#{cmd}"
-
-        output = open("|#{cmd}", "r") { |output| capture_output(output, silence) }
+      def execute_command_for_process(process_number, cmd, silence)
+        command_for_current_process = command_for_process(process_number,cmd)
+        output = open("|#{command_for_current_process}", "r") { |output| capture_output(output, silence) }
         exitstatus = $?.exitstatus
-
         {:stdout => output, :exit_status => exitstatus}
+      end
+
+      def command_for_process process_number,cmd
+        env = {}
+        device_for_current_process = ParallelCalabash::AdbHelper.device_for_process process_number
+        env = env.merge({'AUTOTEST' => '1', 'ADB_DEVICE_ARG' => device_for_current_process, "TEST_PROCESS_NUMBER" => (process_number+1).to_s})
+        separator = (WINDOWS ? ' & ' : ';')
+        exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(' ')
+        exports + separator + cmd
       end
 
       def capture_output(out, silence)
@@ -75,8 +43,8 @@ module ParallelCalabash
 
 
       def find_results(test_output)
-        test_output.split("\n").map {|line|
-          line.gsub!(/\e\[\d+m/,'')
+        test_output.split("\n").map { |line|
+          line.gsub!(/\e\[\d+m/, '')
           next unless line_is_result?(line)
           line
         }.compact
@@ -101,7 +69,6 @@ module ParallelCalabash
       end
 
 
-
       def summary(results)
         sort_order = %w[scenario step failed undefined skipped pending passed]
 
@@ -120,7 +87,7 @@ module ParallelCalabash
       end
 
       def sum_up_results(results)
-        results = results.join(' ').gsub(/s\b/,'') # combine and singularize results
+        results = results.join(' ').gsub(/s\b/, '') # combine and singularize results
         counts = results.scan(/(\d+) (\w+)/)
         counts.inject(Hash.new(0)) do |sum, (number, word)|
           sum[word] += number.to_i
