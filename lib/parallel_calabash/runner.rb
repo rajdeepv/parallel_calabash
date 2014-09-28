@@ -14,6 +14,7 @@ module ParallelCalabash
         command_for_current_process = command_for_process(process_number, cmd)
         output = open("|#{command_for_current_process}", "r") { |output| show_output(output, silence) }
         exitstatus = $?.exitstatus
+        puts output if silence
         {:stdout => output, :exit_status => exitstatus}
       end
 
@@ -27,26 +28,15 @@ module ParallelCalabash
       end
 
       def show_output(output, silence)
-        silence ? show_output_after_process_completion(output) : show_runtime_output(output)
-      end
-
-      def show_output_after_process_completion output
-        result = ""
-        output.read.split("\n").each do |l|
-          result << l
-          puts l
-        end
-        result
-      end
-
-      def show_runtime_output output
         result = ""
         loop do
           begin
             read = output.readpartial(1000000) # read whatever chunk we can get
             result << read
-            $stdout.print read
-            $stdout.flush
+            unless silence
+              $stdout.print read
+              $stdout.flush
+            end
           end
         end rescue EOFError
         result

@@ -24,7 +24,7 @@ module ParallelCalabash
       report_time_taken do
         groups = feature_groups(options[:feature_folder], number_of_processes)
         puts "#{number_of_processes} processes for #{groups.flatten.size} features"
-        test_results = execute_in_parallel(groups, groups.size, options) do |group|
+        test_results = Parallel.map(groups, :in_threads => groups.size) do |group|
           runner.run_tests(group, groups.index(group), options)
         end
         report_results(test_results)
@@ -47,24 +47,6 @@ module ParallelCalabash
     def runner
       ParallelCalabash::Runner
     end
-
-    def execute_in_parallel(items, num_processes, options)
-      Tempfile.open 'parallel_tests-lock' do |lock|
-        return Parallel.map(items, :in_threads => num_processes) do |item|
-          result = yield(item)
-          # report_output(result, lock) if options[:serialize_stdout]
-          result
-        end
-      end
-    end
-
-    # def report_output(result, lock)
-    #   lock.flock File::LOCK_EX
-    #   $stdout.puts result[:stdout]
-    #   $stdout.flush
-    # ensure
-    #   lock.flock File::LOCK_UN
-    # end
 
     def report_time_taken
       start = Time.now
@@ -89,7 +71,7 @@ module ParallelCalabash
           group << files.delete_at(0)
         end
       end
-      groups
+      groups.reject(&:empty?)
     end
 
     def feature_files_in_folder feature_dir
