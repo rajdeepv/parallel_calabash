@@ -45,6 +45,6 @@ end
 
 options = parse_arguments(ARGV)
 
-ParallelCalabash.run options
+ParallelCalabash.run_tests_in_parallel options
 
 
