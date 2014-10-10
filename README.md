@@ -25,6 +25,8 @@ Or install it yourself as:
 Usage: parallel_calabash [options]
 
 Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/
+
+
     -h, --help                       Show this message
     -v, --version                    Show version
     -a, --apk apk_path               apk file path
