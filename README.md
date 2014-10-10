@@ -1,6 +1,8 @@
 # ParallelCalabash
 
-TODO: Write a gem description
+Run calabash-android tests in parallel on multiple connected devices
+
+eg. bundle exec parallel_calabash -a my.apk -o'--format pretty' features/ --serialize-stdout
 
 ## Installation
 
@@ -12,7 +14,7 @@ gem 'parallel_calabash'
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
@@ -20,7 +22,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Usage: parallel_calabash [options]
+
+Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/
+    -h, --help                       Show this message
+    -v, --version                    Show version
+    -a, --apk apk_path               apk file path
+    -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
+        --serialize-stdout           Serialize stdout output show output only after process completion
 
 ## Contributing
 
