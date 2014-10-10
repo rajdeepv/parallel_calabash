@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["mail.rajvarma@gmail.com"]
   spec.summary       = %q{calabash android tests in parallel}
   spec.description   = %q{Run different calabash android tests in parallel on different devices}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/rajdeepv/parallel_calabash"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_runtime_dependency "parallel"
+  spec.add_runtime_dependency gem 'parallel', '~> 1.3.2'
 end
