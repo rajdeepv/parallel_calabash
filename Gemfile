@@ -5,3 +5,4 @@ gemspec
 gem 'rake'
 gem 'calabash-android'
 gem 'pry'
+gem 'rspec'
