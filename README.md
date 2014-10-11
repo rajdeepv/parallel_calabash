@@ -1,4 +1,4 @@
-# ParallelCalabash
+# calabash parallel execution
 
 ## NOTE: This is not yet tested on windows.
 
