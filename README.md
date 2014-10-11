@@ -27,7 +27,7 @@ Or install it yourself as:
 
 Usage: parallel_calabash [options]
 
-Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/
+Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_here' features/
 
 
     -h, --help                       Show this message
