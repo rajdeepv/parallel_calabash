@@ -32,6 +32,14 @@ Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/
     -a, --apk apk_path               apk file path
     -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
         --serialize-stdout           Serialize stdout output show output only after process completion
+        
+## REPROTING
+
+use ENV['TEST_PROCESS_NUMBER'] environment variable in your ruby scripts to find out the process number. you can use this for reporting purpose.
+
+eg. modify default profile in cucumber.yml as below to get different report from different process
+
+default: --format html --out reports/Automation_report_<%= ENV['TEST_PROCESS_NUMBER'] %>.html --format pretty
 
 ## Contributing
 
