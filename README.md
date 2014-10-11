@@ -1,5 +1,8 @@
 # ParallelCalabash
 
+## NOTE: This is not yet tested on windows.
+
+
 Run calabash-android tests in parallel on multiple connected devices
 
 eg. bundle exec parallel_calabash -a my.apk -o'--format pretty' features/ --serialize-stdout
