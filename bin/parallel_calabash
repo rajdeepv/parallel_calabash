@@ -25,6 +25,10 @@ def parse_arguments(arguments)
       options[:apk_path] = apk_path
     end
 
+    opts.on("-d", "--distribution_tag", "divide features into groups as per occurrence of given tag") do |distribution_tag|
+      options[:distribution_tag] = distribution_tag
+    end
+
     opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
       options[:cucumber_options] = cucumber_opts
     end

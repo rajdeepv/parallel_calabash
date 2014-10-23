@@ -26,7 +26,7 @@ module ParallelCalabash
 
       test_results = nil
       report_time_taken do
-        groups = FeatureGrouper.feature_groups(options[:feature_folder], number_of_processes)
+        groups = FeatureGrouper.feature_groups(options[:feature_folder], number_of_processes,options[:distribution_tag])
         puts "#{number_of_processes} processes for #{groups.flatten.size} features"
         test_results = Parallel.map(groups, :in_threads => groups.size) do |group|
           Runner.run_tests(group, groups.index(group), options)
