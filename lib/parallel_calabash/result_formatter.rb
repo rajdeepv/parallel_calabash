@@ -22,7 +22,7 @@ module ParallelCalabash
       end
 
       def summarize_results(results)
-        output = []
+        output = ["\n\n************ FINAL SUMMARY ************"]
 
         failing_scenarios = results.grep(failing_scenario_regex)
         if failing_scenarios.any?
@@ -69,7 +69,7 @@ module ParallelCalabash
       end
 
       def failing_scenario_regex
-        /^cucumber features\/.+:\d+/
+        /^cucumber .*features\/.+:\d+/
       end
 
     end

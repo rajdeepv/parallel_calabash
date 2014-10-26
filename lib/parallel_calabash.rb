@@ -44,7 +44,9 @@ module ParallelCalabash
     def report_time_taken
       start = Time.now
       yield
-      puts "\nTook #{Time.now - start} seconds"
+      time_in_sec = Time.now - start
+      mm, ss = time_in_sec.divmod(60)
+      puts "\nTook #{mm} Minutes, #{ss.round(2)} Seconds"
     end
 
   end
