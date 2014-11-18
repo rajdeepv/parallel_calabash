@@ -1,0 +1,164 @@
+bundle exec parallel_calabash -a DroidBootcamp.apk -o'-r features' features/ -d @test --serialize-stdout
+
+*******************************
+ 3 DEVICES FOUND
+*******************************
+3 processes for 8 features
+7015 KB/s (553331 bytes in 0.077s)
+4990 KB/s (553331 bytes in 0.108s)
+5188 KB/s (553331 bytes in 0.104s)
+5601 KB/s (40299 bytes in 0.007s)
+4221 KB/s (40299 bytes in 0.009s)
+4446 KB/s (40299 bytes in 0.008s)
+Using the default profile...
+Feature: five digit additions
+
+  @test
+  Scenario: five digit additions of two numbers # features/five_digit.feature:4
+    Given I set First operand as "55555"        # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "1"             # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                             # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "55556"         # features/step_definitions/calculator_steps.rb:9
+
+Feature: single digit additions
+
+  @test
+  Scenario: single digit additions of 2 + 4 # features/single_digit_addition.feature:4
+    Given I set First operand as "1"        # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "2"         # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                         # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "3"         # features/step_definitions/calculator_steps.rb:9
+
+  @test
+  Scenario: single digit additions of 5 + 6 # features/single_digit_addition.feature:11
+    Given I set First operand as "5"        # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "6"         # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                         # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "11"        # features/step_definitions/calculator_steps.rb:9
+
+3 scenarios (3 passed)
+12 steps (12 passed)
+0m15.458s
+
+****** PROCESS 2 COMPLETED ******
+
+Using the default profile...
+Feature: eight digit additions
+
+  @test
+  Scenario: eight digit additions of two numbers # features/eight_digit.feature:4
+    Given I set First operand as "88888888"      # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "1"              # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                              # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "88888889csd"    # features/step_definitions/calculator_steps.rb:9
+
+      expected: "88888889csd"
+           got: "88888889"
+
+      (compared using ==)
+       (RSpec::Expectations::ExpectationNotMetError)
+      ./features/step_definitions/calculator_steps.rb:10:in `/^I should get result as "([^"]*)"$/'
+      features/eight_digit.feature:8:in `Then I should get result as "88888889csd"'
+
+Feature: seven digit additions
+
+  @test
+  Scenario: seven digit additions of two numbers # features/seven_digit.feature:4
+    Given I set First operand as "7777777"       # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "1"              # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                              # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "7777778"        # features/step_definitions/calculator_steps.rb:9
+
+Feature: Triple digit additions
+
+  @test
+  Scenario: triple digit additions of 102 + 102 # features/triple_digit_addition.feature:4
+    Given I set First operand as "102"          # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "102"           # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                             # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "204"           # features/step_definitions/calculator_steps.rb:9
+
+  @test
+  Scenario: triple digit additions of 500 + 500 # features/triple_digit_addition.feature:11
+    Given I set First operand as "500"          # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "500"           # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                             # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "1000"          # features/step_definitions/calculator_steps.rb:9
+
+Failing Scenarios:
+cucumber features/eight_digit.feature:4 # Scenario: eight digit additions of two numbers
+
+4 scenarios (1 failed, 3 passed)
+16 steps (1 failed, 15 passed)
+0m21.678s
+
+****** PROCESS 1 COMPLETED ******
+
+Using the default profile...
+Feature: double digit additions
+
+  @test
+  Scenario: double digit additions of 10 + 22 # features/double_digit_addition.feature:4
+    Given I set First operand as "10"         # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "22"          # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                           # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "32"          # features/step_definitions/calculator_steps.rb:9
+
+  Scenario: double digit additions of 55 + 45 # features/double_digit_addition.feature:10
+    Given I set First operand as "55  "       # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "45"          # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                           # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+      HTTPClient::KeepAliveDisconnected (HTTPClient::KeepAliveDisconnected)
+      features/double_digit_addition.feature:13:in `And I press "+"'
+    Then I should get result as "1000"        # features/step_definitions/calculator_steps.rb:9
+
+Feature: four digit additions
+
+  @test
+  Scenario: four digit additions of two numbers # features/four_digit.feature:4
+    Given I set First operand as "4444"         # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "1"             # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                             # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "444csc5"       # features/step_definitions/calculator_steps.rb:9
+
+      expected: "444csc5"
+           got: "4445"
+
+      (compared using ==)
+       (RSpec::Expectations::ExpectationNotMetError)
+      ./features/step_definitions/calculator_steps.rb:10:in `/^I should get result as "([^"]*)"$/'
+      features/four_digit.feature:8:in `Then I should get result as "444csc5"'
+
+Feature: six digit additions
+
+  @test
+  Scenario: six digit additions of two numbers # features/six_digit.feature:4
+    Given I set First operand as "666666"      # features/step_definitions/calculator_steps.rb:1
+    And I set Second operand as "1"            # features/step_definitions/calculator_steps.rb:5
+    And I press "+"                            # calabash-android-0.5.2/lib/calabash-android/steps/press_button_steps.rb:17
+    Then I should get result as "666667"       # features/step_definitions/calculator_steps.rb:9
+
+Failing Scenarios:
+cucumber features/double_digit_addition.feature:10 # Scenario: double digit additions of 55 + 45
+cucumber features/four_digit.feature:4 # Scenario: four digit additions of two numbers
+
+4 scenarios (2 failed, 2 passed)
+16 steps (2 failed, 1 skipped, 13 passed)
+0m22.458s
+
+****** PROCESS 0 COMPLETED ******
+
+
+
+
+************ FINAL SUMMARY ************
+
+Failing Scenarios:
+cucumber features/double_digit_addition.feature:10 # Scenario: double digit additions of 55 + 45
+cucumber features/four_digit.feature:4 # Scenario: four digit additions of two numbers
+cucumber features/eight_digit.feature:4 # Scenario: eight digit additions of two numbers
+
+11 scenarios (3 failed, 8 passed)
+44 steps (3 failed, 1 skipped, 40 passed)
+
+Took 0 Minutes, 24.84 Seconds
