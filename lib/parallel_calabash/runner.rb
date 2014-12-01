@@ -28,7 +28,7 @@ module ParallelCalabash
         device_for_current_process = ParallelCalabash::AdbHelper.device_for_process process_number
         env = env.merge({'AUTOTEST' => '1', 'ADB_DEVICE_ARG' => device_for_current_process, "TEST_PROCESS_NUMBER" => (process_number+1).to_s})
         separator = (WINDOWS ? ' & ' : ';')
-        exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(' ')
+        exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(separator)
         exports + separator + cmd
       end
 
