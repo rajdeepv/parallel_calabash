@@ -2,20 +2,26 @@ module ParallelCalabash
   module AdbHelper
     class << self
 
-      def connected_devices
+      def device_for_process process_num
+        connected_devices_with_model_info[process_num]
+      end
+
+      def number_of_connected_devices
+        connected_devices_with_model_info.size
+      end
+
+      def connected_devices_with_model_info
         begin
-          `adb devices`.scan(/\n(.*)\t/).flatten
+          `adb devices -l`.split("\n").collect{|line|  device_id_and_model(line)}.compact
         rescue
           []
         end
       end
 
-      def device_for_process process_num
-        connected_devices[process_num]
-      end
-
-      def number_of_connected_devices
-        connected_devices.size
+      def device_id_and_model line
+        if line.include?("device ")
+          [line.split(" ").first,line.scan(/model:(.*) device/).flatten.first]
+        end
       end
 
     end
