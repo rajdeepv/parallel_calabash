@@ -6,7 +6,7 @@ describe ParallelCalabash::Runner do
     it 'should return command with env variables' do
       ParallelCalabash::AdbHelper.should_receive(:device_for_process).with(0).and_return("5555")
       expect(ParallelCalabash::Runner.command_for_process(0, 'base_command')).to eq \
-      "AUTOTEST=1;export AUTOTEST ADB_DEVICE_ARG=5555;export ADB_DEVICE_ARG TEST_PROCESS_NUMBER=1;export TEST_PROCESS_NUMBER;base_command"
+      "AUTOTEST=1;export AUTOTEST;ADB_DEVICE_ARG=5555;export ADB_DEVICE_ARG;TEST_PROCESS_NUMBER=1;export TEST_PROCESS_NUMBER;base_command"
     end
   end
 
