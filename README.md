@@ -1,5 +1,7 @@
 # calabash parallel execution
 
+# Now Supported on Windows
+
 ## Watch a quick demo here:
 
 https://www.youtube.com/watch?v=sK3s0txeJvc
@@ -43,11 +45,13 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
         
 ## REPROTING
 
-use ENV['TEST_PROCESS_NUMBER'] environment variable in your ruby scripts to find out the process number. you can use this for reporting purpose.
+use ENV['TEST_PROCESS_NUMBER'] environment variable in your ruby scripts to find out the process number. you can use this for reporting purpose OR process specific action.
+
+To get device model info, use ENV['DEVICE_INFO'] env variable.
 
 eg. modify default profile in cucumber.yml as below to get different report from different process
 
-default: --format html --out reports/Automation_report_<%= ENV['TEST_PROCESS_NUMBER'] %>.html --format pretty
+default: --format html --out reports/Report_<%=ENV['DEVICE_INFO']%>_<%= ENV['TEST_PROCESS_NUMBER']%>.html --format pretty
 
 ## Contributing
 
