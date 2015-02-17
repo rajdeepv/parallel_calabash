@@ -50,6 +50,7 @@ module ParallelCalabash
         features.each do |feature|
           feature_groups[index_of_lightest_group(feature_groups)] << feature
         end
+        feature_groups.reject!{|group|  group.empty?}
         feature_groups.map{|group| group.map{|feature_hash| feature_hash[:feature]}}
       end
 
