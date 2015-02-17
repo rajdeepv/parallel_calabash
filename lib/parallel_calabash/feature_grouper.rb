@@ -3,8 +3,18 @@ module ParallelCalabash
 
     class << self
 
-      def feature_groups(feature_folder, group_size,weighing_factor = nil)
-        weighing_factor.nil? ? feature_groups_by_feature_files(feature_folder, group_size) :  feature_groups_by_weight(feature_folder, group_size,weighing_factor)
+      def feature_groups(feature_folder, group_size,weighing_factor = nil, concurrent = nil)
+        if concurrent.nil?
+          weighing_factor.nil? ? feature_groups_by_feature_files(feature_folder, group_size) :  feature_groups_by_weight(feature_folder, group_size,weighing_factor)
+        else
+          concurrent_feature_groups(feature_folder, group_size)
+        end
+      end
+
+      def concurrent_feature_groups(feature_folder, number_of_groups)
+        groups = []
+        (0...number_of_groups).each{ groups << feature_files_in_folder(feature_folder) }
+        groups
       end
 
       def feature_groups_by_feature_files(feature_folder, group_size)

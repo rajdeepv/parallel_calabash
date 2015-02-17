@@ -38,6 +38,17 @@ describe ParallelCalabash::FeatureGrouper do
       [["spec/test_data/features/aaa.feature", "spec/test_data/features/fff.feature"], ["spec/test_data/features/bbb.feature"], ["spec/test_data/features/ccc.feature"], ["spec/test_data/features/ddd.feature"], ["spec/test_data/features/eee.feature"]]
     end
 
+    it 'should create 1 group for concurrent 1 process' do
+      expect(ParallelCalabash::FeatureGrouper.feature_groups(['spec/test_data/features'], 1, nil, true)).to eq \
+      [["spec/test_data/features/aaa.feature", "spec/test_data/features/bbb.feature", "spec/test_data/features/ccc.feature", "spec/test_data/features/ddd.feature", "spec/test_data/features/eee.feature", "spec/test_data/features/fff.feature"]]
+    end
+
+    it 'should create 2 group for concurrent 2 processes' do
+      expect(ParallelCalabash::FeatureGrouper.feature_groups(['spec/test_data/features'], 2, nil, true)).to eq \
+      [["spec/test_data/features/aaa.feature", "spec/test_data/features/bbb.feature", "spec/test_data/features/ccc.feature", "spec/test_data/features/ddd.feature", "spec/test_data/features/eee.feature", "spec/test_data/features/fff.feature"],
+       ["spec/test_data/features/aaa.feature", "spec/test_data/features/bbb.feature", "spec/test_data/features/ccc.feature", "spec/test_data/features/ddd.feature", "spec/test_data/features/eee.feature", "spec/test_data/features/fff.feature"]]
+    end
+
   end
 
   describe :feature_weight do

@@ -37,6 +37,10 @@ def parse_arguments(arguments)
       options[:mute_output] = mute_output
     end
 
+    opts.on("--concurrent", "Run tests concurrently. Each test will run once on each device") do |concurrent_opt|
+      options[:concurrent] = true
+    end
+
   end
 
   opt_parser.parse!(arguments)
