@@ -11,6 +11,22 @@ module ParallelCalabash
         end
       end
 
+      def feature_groups_by_scenarios(features_scenarios,group_size)
+        puts features_scenarios.size
+        min_number_scenarios_per_group = features_scenarios.size/group_size
+        remaining_number_of_scenarios = features_scenarios.size % group_size
+        groups = Array.new(group_size) { [] }
+        groups.each do |group|
+          min_number_scenarios_per_group.times { group << features_scenarios.delete_at(0) }
+        end
+        unless remaining_number_of_scenarios==0
+          groups[0..(remaining_number_of_scenarios-1)].each do |group|
+            group << features_scenarios.delete_at(0)
+          end
+        end
+        groups.reject(&:empty?)
+      end
+
       def concurrent_feature_groups(feature_folder, number_of_groups)
         groups = []
         (0...number_of_groups).each{ groups << feature_files_in_folder(feature_folder) }
