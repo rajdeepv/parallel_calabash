@@ -42,6 +42,8 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
     -d distribution_tag,             divide features into groups as per occurrence of given tag
             --distribution-tag
         --serialize-stdout           Serialize stdout output show output only after process completion
+
+    --concurrent                     RUNS ALL TESTS ON ALL DEVICES. This will be useful if you want to test your app on variety of devices and OS versions.
         
 ## REPROTING
 
