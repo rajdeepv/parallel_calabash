@@ -34,16 +34,13 @@ Usage: parallel_calabash [options]
 Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_here' features/
 
 
-    -h, --help                       Show this message
+        -h, --help                       Show this message
     -v, --version                    Show version
     -a, --apk apk_path               apk file path
+    -d, --distribution-tag tag       divide features into groups as per occurrence of given tag
     -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
-
-    -d distribution_tag,             divide features into groups as per occurrence of given tag
-            --distribution-tag
-        --serialize-stdout           Serialize stdout output show output only after process completion
-
-    --concurrent                     RUNS ALL TESTS ON ALL DEVICES. This will be useful if you want to test your app on variety of devices and OS versions.
+        --serialize-stdout           Serialize stdout output, nothing will be written until everything is done
+        --concurrent                 Run tests concurrently. Each test will run once on each device.
         
 ## REPROTING
 
