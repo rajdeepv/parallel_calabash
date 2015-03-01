@@ -40,8 +40,9 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
     -d, --distribution-tag tag       divide features into groups as per occurrence of given tag
     -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
     --serialize-stdout               Serialize stdout output, nothing will be written until everything is done
+    --group-by-scenarios             Distribute equally as per scenarios. This uses cucumber dry run
     --concurrent                     Run tests concurrently. Each test will run once on each device.
-        
+
 ## REPROTING
 
 use ENV['TEST_PROCESS_NUMBER'] environment variable in your ruby scripts to find out the process number. you can use this for reporting purpose OR process specific action.
