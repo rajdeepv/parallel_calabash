@@ -41,6 +41,10 @@ def parse_arguments(arguments)
       options[:concurrent] = true
     end
 
+    opts.on("--group-by-scenarios", "Distribute equally as per scenarios. This uses cucumber dry run") do
+      options[:group_by_scenarios] = true
+    end
+
   end
 
   opt_parser.parse!(arguments)

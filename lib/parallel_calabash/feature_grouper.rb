@@ -4,12 +4,11 @@ module ParallelCalabash
 
     class << self
 
-      def feature_groups(feature_folder, group_size,weighing_factor = nil, concurrent = nil)
-        if concurrent.nil?
-          weighing_factor.nil? ? feature_groups_by_feature_files(feature_folder, group_size) :  feature_groups_by_weight(feature_folder, group_size,weighing_factor)
-        else
-          concurrent_feature_groups(feature_folder, group_size)
-        end
+      def feature_groups(options, group_size)
+        return concurrent_feature_groups(options[:feature_folder], group_size) if options[:concurrent]
+        return scenario_groups group_size, options if options[:group_by_scenarios]
+        return feature_groups_by_weight(options[:feature_folder], group_size,options[:distribution_tag]) if options[:distribution_tag]
+        feature_groups_by_feature_files(options[:feature_folder], group_size)
       end
 
       def concurrent_feature_groups(feature_folder, number_of_groups)
