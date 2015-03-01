@@ -96,5 +96,23 @@ describe ParallelCalabash::FeatureGrouper do
     end
   end
 
+  describe :scenario_groups do
+    it 'should groups all @runnable scenario equally into 2 groups' do
+      expect(ParallelCalabash::FeatureGrouper.scenario_groups(2,{:feature_folder => ["spec/test_data/features"],:cucumber_options => "--tags @runnable"})).to eq \
+      [["spec/test_data/features/aaa.feature:10", "spec/test_data/features/aaa.feature:16", "spec/test_data/features/aaa.feature:19", "spec/test_data/features/bbb.feature:13"], ["spec/test_data/features/bbb.feature:16", "spec/test_data/features/ccc.feature:11", "spec/test_data/features/ddd.feature:7", "spec/test_data/features/ddd.feature:10"]]
+    end
+
+    it 'should groups all @runnable scenario equally into 2 groups' do
+      expect(ParallelCalabash::FeatureGrouper.scenario_groups(3,{:feature_folder => ["spec/test_data/features"],:cucumber_options => "--tags @runnable"})).to eq \
+      [["spec/test_data/features/aaa.feature:10", "spec/test_data/features/aaa.feature:16", "spec/test_data/features/ddd.feature:7"], ["spec/test_data/features/aaa.feature:19", "spec/test_data/features/bbb.feature:13", "spec/test_data/features/ddd.feature:10"], ["spec/test_data/features/bbb.feature:16", "spec/test_data/features/ccc.feature:11"]]
+    end
+
+    it 'should groups all @runnable scenario equally into 2 groups' do
+      expect(ParallelCalabash::FeatureGrouper.scenario_groups(4,{:feature_folder => ["spec/test_data/features"],:cucumber_options => "--tags @runnable"})).to eq \
+      [["spec/test_data/features/aaa.feature:10", "spec/test_data/features/aaa.feature:16"], ["spec/test_data/features/aaa.feature:19", "spec/test_data/features/bbb.feature:13"], ["spec/test_data/features/bbb.feature:16", "spec/test_data/features/ccc.feature:11"], ["spec/test_data/features/ddd.feature:7", "spec/test_data/features/ddd.feature:10"]]
+    end
+
+  end
+
 
 end
