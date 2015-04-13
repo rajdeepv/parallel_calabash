@@ -54,6 +54,9 @@ module ParallelCalabash
         if File.directory?(feature_dir.first)
           files = Dir[File.join(feature_dir, "**{,/*/**}/*")].uniq
           files.grep(/\.feature$/)
+        elsif File.file?(feature_dir.first)
+          scenarios = File.open(feature_dir.first).collect{ |line| line.split(' ') }
+          scenarios.flatten
         end
       end
 

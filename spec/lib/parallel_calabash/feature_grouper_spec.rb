@@ -9,6 +9,11 @@ describe ParallelCalabash::FeatureGrouper do
       expect(ParallelCalabash::FeatureGrouper.feature_files_in_folder ['spec/test_data/features']).to eq \
       ["spec/test_data/features/aaa.feature", "spec/test_data/features/bbb.feature", "spec/test_data/features/ccc.feature", "spec/test_data/features/ddd.feature", "spec/test_data/features/eee.feature", "spec/test_data/features/fff.feature"]
     end
+
+    it 'should find all the feature files in a rerun text file' do
+      expect(ParallelCalabash::FeatureGrouper.feature_files_in_folder ['spec/test_data/rerun.txt']).to eq \
+        ["features/aaa.feature:3", "features/aaa.feature:6", "features/aaa.feature:9", "features/bbb.feature:3", "features/bbb.feature:6", "features/bbb.feature:9"]
+    end
   end
 
   describe :feature_groups do
