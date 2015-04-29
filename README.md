@@ -1,7 +1,5 @@
 # calabash parallel execution
 
-# Now Supported on Windows
-
 ## Watch a quick demo here:
 
 https://www.youtube.com/watch?v=sK3s0txeJvc
