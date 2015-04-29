@@ -35,7 +35,6 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
     -h, --help                       Show this message
     -v, --version                    Show version
     -a, --apk apk_path               apk file path
-    -d, --distribution-tag tag       divide features into groups as per occurrence of given tag
     -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
     --serialize-stdout               Serialize stdout output, nothing will be written until everything is done
     --group-by-scenarios             Distribute equally as per scenarios. This uses cucumber dry run
