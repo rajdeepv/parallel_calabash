@@ -7,11 +7,11 @@ module ParallelCalabash
 
       def run_tests(test_files, process_number, options)
         cmd = [base_command, options[:apk_path], options[:cucumber_options], *test_files].compact*' '
-        execute_command_for_process(process_number, cmd, options[:mute_output])
+        execute_command_for_process(process_number, cmd, options[:mute_output], options[:filter])
       end
 
-      def execute_command_for_process(process_number, cmd, silence)
-        command_for_current_process = command_for_process(process_number, cmd)
+      def execute_command_for_process(process_number, cmd, silence, filter)
+        command_for_current_process = command_for_process(process_number, cmd, filter)
         output = open("|#{command_for_current_process}", "r") { |output| show_output(output, silence) }
         exitstatus = $?.exitstatus
 
@@ -23,9 +23,9 @@ module ParallelCalabash
         {:stdout => output, :exit_status => exitstatus}
       end
 
-      def command_for_process process_number, cmd
+      def command_for_process(process_number, cmd, filter)
         env = {}
-        device_id, device_info = ParallelCalabash::AdbHelper.device_for_process process_number
+        device_id, device_info = ParallelCalabash::AdbHelper.device_for_process process_number, filter
         env = env.merge({'AUTOTEST' => '1', 'ADB_DEVICE_ARG' => device_id, 'DEVICE_INFO' => device_info, "TEST_PROCESS_NUMBER" => (process_number+1).to_s})
         separator = (WINDOWS ? ' & ' : ';')
         exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(separator)

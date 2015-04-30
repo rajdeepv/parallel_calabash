@@ -29,6 +29,10 @@ def parse_arguments(arguments)
       options[:distribution_tag] = distribution_tag
     end
 
+    opts.on("-f", "--filter filter", "Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','") do |filter_opts|
+      options[:filter] = filter_opts.split(",")
+    end
+
     opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
       options[:cucumber_options] = cucumber_opts
     end
