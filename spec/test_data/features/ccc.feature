@@ -7,7 +7,7 @@ Feature: ccc.feature
   @tag1
   Scenario:
 
-  @tag1
+  @tag1 @runnable
   Scenario:
 
   @tag1

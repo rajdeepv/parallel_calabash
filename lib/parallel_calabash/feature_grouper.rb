@@ -1,14 +1,14 @@
+require 'json'
 module ParallelCalabash
   class FeatureGrouper
 
     class << self
 
-      def feature_groups(feature_folder, group_size,weighing_factor = nil, concurrent = nil)
-        if concurrent.nil?
-          weighing_factor.nil? ? feature_groups_by_feature_files(feature_folder, group_size) :  feature_groups_by_weight(feature_folder, group_size,weighing_factor)
-        else
-          concurrent_feature_groups(feature_folder, group_size)
-        end
+      def feature_groups(options, group_size)
+        return concurrent_feature_groups(options[:feature_folder], group_size) if options[:concurrent]
+        return scenario_groups group_size, options if options[:group_by_scenarios]
+        return feature_groups_by_weight(options[:feature_folder], group_size,options[:distribution_tag]) if options[:distribution_tag]
+        feature_groups_by_feature_files(options[:feature_folder], group_size)
       end
 
       def feature_groups_by_scenarios(features_scenarios,group_size)
@@ -35,6 +35,11 @@ module ParallelCalabash
 
       def feature_groups_by_feature_files(feature_folder, group_size)
         files = feature_files_in_folder feature_folder
+        groups = group_creator group_size,files
+        groups.reject(&:empty?)
+      end
+
+      def group_creator group_size, files
         min_number_files_per_group = files.size/group_size
         remaining_number_of_files = files.size % group_size
         groups = Array.new(group_size) { [] }
@@ -46,7 +51,19 @@ module ParallelCalabash
             group << files.delete_at(0)
           end
         end
-        groups.reject(&:empty?)
+        groups
+      end
+
+      def scenario_groups group_size, options
+        generate_dry_run_report options
+        raise "Can not create dry run for scenario distribution" unless File.exists?("parallel_calabash_dry_run.json")
+        distribution_data = JSON.parse(File.read("parallel_calabash_dry_run.json"))
+        all_runnable_scenarios = distribution_data.map { |feature| feature["elements"].map { |scenario| "#{feature["uri"]}:#{scenario["line"]}" } }.flatten
+        groups = group_creator group_size,all_runnable_scenarios
+      end
+
+      def generate_dry_run_report options
+        `cucumber #{options[:cucumber_options]}  -f usage --dry-run -f json --out parallel_calabash_dry_run.json #{options[:feature_folder].first}`
       end
 
       def feature_files_in_folder(feature_dir)

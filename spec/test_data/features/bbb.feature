@@ -9,10 +9,10 @@ Feature: bbb.feature
   @tag12
   Scenario:
 
-  @tag1
+  @tag1 @runnable
   Scenario:
 
-  @tag1
+  @tag1 @runnable
   Scenario:
 
   @tag1
