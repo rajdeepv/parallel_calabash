@@ -19,7 +19,7 @@ module ParallelCalabash
       end
 
       def device_id_and_model line
-        if line.include?("device ")
+        if line.match(/device(?!s)/)
           [line.split(" ").first,line.scan(/model:(.*) device/).flatten.first]
         end
       end
