@@ -51,19 +51,31 @@ module ParallelCalabash
             group << files.delete_at(0)
           end
         end
-        groups
+        groups.reject &:empty?
       end
 
       def scenario_groups group_size, options
         generate_dry_run_report options
         raise "Can not create dry run for scenario distribution" unless File.exists?("parallel_calabash_dry_run.json")
         distribution_data = JSON.parse(File.read("parallel_calabash_dry_run.json"))
-        all_runnable_scenarios = distribution_data.map { |feature| feature["elements"].map { |scenario| "#{feature["uri"]}:#{scenario["line"]}" } }.flatten
+        all_runnable_scenarios = distribution_data.map do |feature|
+          unless feature["elements"].nil?
+            feature["elements"].map do |scenario|
+              if scenario["keyword"] == 'Scenario'
+                "#{feature["uri"]}:#{scenario["line"]}"
+              elsif scenario['keyword'] == 'Scenario Outline'
+                scenario["examples"].map { |example|
+                  "#{feature["uri"]}:#{example["line"]}"
+                }
+              end
+            end
+          end
+        end.flatten.compact
         groups = group_creator group_size,all_runnable_scenarios
       end
 
       def generate_dry_run_report options
-        `cucumber #{options[:cucumber_options]}  -f usage --dry-run -f json --out parallel_calabash_dry_run.json #{options[:feature_folder].first}`
+        `cucumber #{options[:cucumber_options]}  -f usage --dry-run -f json --out parallel_calabash_dry_run.json #{options[:feature_folder].join(' ')}`
       end
 
       def feature_files_in_folder(feature_dir)
