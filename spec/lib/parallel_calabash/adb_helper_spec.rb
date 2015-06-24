@@ -9,7 +9,7 @@ describe ParallelCalabash::AdbHelper do
     end
 
     it 'should match devices if there is a space after the word device' do
-       expect(ParallelCalabash::AdbHelper.device_id_and_model("emulator-5554  device ")).to eq \
+      expect(ParallelCalabash::AdbHelper.device_id_and_model("emulator-5554  device ")).to eq \
          ["emulator-5554", nil]
     end
 
@@ -27,4 +27,27 @@ describe ParallelCalabash::AdbHelper do
       expect(ParallelCalabash::AdbHelper.device_id_and_model(output)).to eq ["192.168.56.101:5555", "device1"]
     end
   end
+
+  describe :filter_device do
+    it 'should return devices if no filter is specified' do
+      device = ["192.168.56.101:5555", "device1"]
+      expect(ParallelCalabash::AdbHelper.filter_device(device, [])).to eq device
+    end
+
+    it 'should match devices that match the filter' do
+      device = ["192.168.56.101:5555", "device1"]
+      expect(ParallelCalabash::AdbHelper.filter_device(device, ["device1"])).to eq device
+    end
+
+    it 'should not return devices that do not match the filter' do
+      device = ["192.168.56.101:5555", "device1"]
+      expect(ParallelCalabash::AdbHelper.filter_device(device, ["notmatching"])).to eq nil
+    end
+
+    it 'can also match on ip address' do
+      device = ["192.168.56.101:5555", "device1"]
+      expect(ParallelCalabash::AdbHelper.filter_device(device, ["192.168.56.101"])).to eq device
+    end
+  end
+
 end

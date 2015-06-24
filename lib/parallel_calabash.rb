@@ -12,8 +12,8 @@ module ParallelCalabash
   WINDOWS = (RbConfig::CONFIG['host_os'] =~ /cygwin|mswin|mingw|bccwin|wince|emx/)
   class << self
 
-    def number_of_processes_to_start
-      number_of_processes = AdbHelper.number_of_connected_devices
+    def number_of_processes_to_start options
+      number_of_processes = AdbHelper.number_of_connected_devices(options[:filter])
       raise "\n**** NO DEVICE FOUND ****\n" if number_of_processes==0
       puts "*******************************"
       puts " #{number_of_processes} DEVICES FOUND"
@@ -22,7 +22,7 @@ module ParallelCalabash
     end
 
     def run_tests_in_parallel(options)
-      number_of_processes = number_of_processes_to_start
+      number_of_processes = number_of_processes_to_start(options)
 
       test_results = nil
       report_time_taken do
