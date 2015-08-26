@@ -5,7 +5,7 @@ module ParallelCalabash
 
       def report_results(test_results)
         results = find_results(test_results.map { |result| result[:stdout] }.join(''))
-        puts ""
+        puts ''
         puts summarize_results(results)
       end
 

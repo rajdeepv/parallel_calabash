@@ -12,7 +12,7 @@ module ParallelCalabash
       end
 
       def feature_groups_by_scenarios(features_scenarios,group_size)
-        puts features_scenarios.size
+        puts "Scenarios: #{features_scenarios.size}"
         min_number_scenarios_per_group = features_scenarios.size/group_size
         remaining_number_of_scenarios = features_scenarios.size % group_size
         groups = Array.new(group_size) { [] }
@@ -58,15 +58,20 @@ module ParallelCalabash
         generate_dry_run_report options
         raise "Can not create dry run for scenario distribution" unless File.exists?("parallel_calabash_dry_run.json")
         distribution_data = JSON.parse(File.read("parallel_calabash_dry_run.json"))
+        # puts "SCENARIO GROUPS #{distribution_data}"
         all_runnable_scenarios = distribution_data.map do |feature|
           unless feature["elements"].nil?
             feature["elements"].map do |scenario|
               if scenario["keyword"] == 'Scenario'
                 "#{feature["uri"]}:#{scenario["line"]}"
               elsif scenario['keyword'] == 'Scenario Outline'
-                scenario["examples"].map { |example|
-                  "#{feature["uri"]}:#{example["line"]}"
-                }
+                if scenario["examples"]
+                  scenario["examples"].map { |example|
+                    "#{feature["uri"]}:#{example["line"]}"
+                  }
+                else
+                  "#{feature["uri"]}:#{scenario["line"]}" # Cope with --expand
+                end
               end
             end
           end
