@@ -60,10 +60,11 @@ module ParallelCalabash
       cmd = [base_command, apk_path, cucumber_options, *test_files].compact*' '
       device_id, device_info = @device_helper.device_for_process process_number
       env = {
-          'AUTOTEST' => '1',
-          'ADB_DEVICE_ARG' => device_id,
-          'DEVICE_INFO' => device_info,
-          'TEST_PROCESS_NUMBER' => (process_number+1).to_s
+          AUTOTEST: '1',
+          ADB_DEVICE_ARG: device_id,
+          DEVICE_INFO: device_info,
+          TEST_PROCESS_NUMBER: (process_number+1).to_s,
+          SCREENSHOT_PATH: device_id.to_s + '_'
       }
       separator = (WINDOWS ? ' & ' : ';')
       exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(separator)
@@ -89,7 +90,14 @@ module ParallelCalabash
           options[:app_path], "#{options[:cucumber_options]} #{options[:cucumber_reports]}",
           options[:simulator])
       puts "#{process_number}>> Command: #{test}"
-      execute_command_for_process(process_number, test)
+
+
+      o = execute_command_for_process(process_number, test)
+      device = @device_helper.device_for_process process_number
+      log = "/tmp/PCal-#{device[:user]}.process_number"
+      puts "Writing log #{log}"
+      open(log, 'w') { |file| file.print o[:stdout] }
+      o
     end
 
     def command_for_test(process_number, test_files, app_path, cucumber_options, simulator)
@@ -108,12 +116,14 @@ module ParallelCalabash
       cmd = [base_command, "APP_BUNDLE_PATH=#{user_app}", cucumber_options, *test_files].compact*' '
 
       env = {
-          'AUTOTEST' => '1',
-          'DEVICE_ENDPOINT' => "http://localhost:#{device['CalabashServerPort']}",
-          'DEVICE_TARGET' => device_target,
-          'DEVICE_INFO' => device_info,
-          'TEST_USER' => device[:user],
-          'TEST_PROCESS_NUMBER' => (process_number+1).to_s
+          AUTOTEST: '1',
+          DEVICE_ENDPOINT: "http://localhost:#{device['CalabashServerPort']}",
+          DEVICE_TARGET: device_target,
+          DEVICE_INFO: device_info,
+          TEST_USER: device[:user],
+          # 'DEBUG_UNIX_CALLS' => '1',
+          TEST_PROCESS_NUMBER: (process_number+1).to_s,
+          SCREENSHOT_PATH: "pc_#{(process_number+1).to_s}_"
       }
       exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}='#{v}';export #{k}" }.join(separator)
 
@@ -128,7 +138,7 @@ module ParallelCalabash
           temp = "#{path}......"
           FileUtils.copy(path, temp)
           FileUtils.move(temp, path)
-          puts "Acquired.... #{path}"
+          puts "Chowned/copied.... #{path}"
         end
       end
       FileUtils.chmod_R('g+w', 'build/reports')

@@ -50,6 +50,14 @@ module ParallelCalabash
     include ParallelCalabash::DevicesHelper
 
     def initialize(user_glob = '/Users/*/.parallel-calabash')
+      # Each user:
+      # 1. Must have the qa user in their .ssh/allowed_keys
+      # 2. Should configure the same ruby - e.g. ln -s ~qa/.rvm ~/.rvm
+      # 3. Needs a .parallel-calabash like this:
+      #   $ cat ~/.parallel-calabash
+      #   CalabashServerPort=38003
+      #   init=[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
       @filter = []
       @user_glob = user_glob
     end
@@ -57,7 +65,7 @@ module ParallelCalabash
     def connected_devices_with_model_info
       # For now, just mark available users with this .file in their $HOME.
       puser_dirs = Dir.glob(@user_glob)
-      puser_dirs.collect do |file_name|
+      configs = puser_dirs.collect do |file_name|
         user = File.basename(File.dirname(file_name))
         config = File.open(file_name) do |file|
           pairs = file.readlines.inject({}) do |h, l|
@@ -69,6 +77,7 @@ module ParallelCalabash
         fail "User #{user} does not define CalabashServerPort in #{config}" unless config.has_key?('CalabashServerPort')
         config
       end
+      configs.sort_by!{|p| p['order'] || p[:user]}
     end
   end
 end

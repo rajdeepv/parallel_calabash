@@ -45,12 +45,17 @@ module ParallelCalabash
         groups = FeatureGrouper.feature_groups(@options, number_of_processes)
         threads = groups.size
         puts "Running with #{threads} threads: #{groups}"
-        test_results = Parallel.map_with_index(groups, :in_threads => threads) do |group, index|
+        complete = []
+        test_results = Parallel.map_with_index(
+            groups,
+            :in_threads => threads,
+            :finish => lambda { |_, i, _|  complete.push(i); print complete }) do |group, index|
           @runner.run_tests(group, index, @options)
         end
         puts 'All threads complete'
         ResultFormatter.report_results(test_results)
       end
+      @runner.prepare_for_parallel_execution
       puts 'Parallel run complete'
       Kernel.exit(1) if any_test_failed?(test_results)
     end
