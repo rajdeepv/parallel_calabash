@@ -15,9 +15,9 @@ module ParallelCalabash
     def initialize(options)
       @options = options
       @helper = if options.has_key?(:apk_path)
-                  ParallelCalabash::AdbHelper.new
+                  ParallelCalabash::AdbHelper.new(options[:filter])
                 else
-                  ParallelCalabash::IosHelper.new
+                  ParallelCalabash::IosHelper.new(options[:filter])
                 end
       @runner = if options.has_key?(:apk_path)
                   ParallelCalabash::AndroidRunner.new(@helper, options[:mute_output])

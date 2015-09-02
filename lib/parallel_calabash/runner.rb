@@ -89,7 +89,8 @@ module ParallelCalabash
           process_number, test_files,
           options[:app_path], "#{options[:cucumber_options]} #{options[:cucumber_reports]}",
           options[:simulator])
-      puts "#{process_number}>> Command: #{test}"
+      $stdout.print "#{process_number}>> Command: #{test}\n"
+      $stdout.flush
 
 
       o = execute_command_for_process(process_number, test)
@@ -105,19 +106,24 @@ module ParallelCalabash
       separator = (WINDOWS ? ' & ' : ';')
       remote = "#{device[:user]}@localhost"
 
-      user_app = copy_app_set_port(app_path, device)
+      if device['CalabashServerPort']
+        user_app = copy_app_set_port(app_path, device)
+      else
+        user_app = app_path
+      end
 
-      version = simulator.match('\d+-\d+$').to_s.gsub('-', '.')
       device_name = device['deviceName'] || "par-cal-#{device[:user]}"
-      device_info = create_simulator(device_name, remote, simulator)
-      device_target = "#{device_name} (#{version} Simulator)"
-      puts "#{process_number}>> Simulator: #{device_info} = #{device_name} = #{device_target}"
+      device_info = device['deviceInfo'] || create_simulator(device_name, remote, simulator)
+      device_target = device['deviceTarget'] || "#{device_name} (#{version(simulator)} Simulator)"
+      device_endpoint = device['deviceEndpoint'] || "http://localhost:#{device['CalabashServerPort']}"
+      $stdout.print "#{process_number}>> Device: #{device_info} = #{device_name} = #{device_target}\n"
+      $stdout.flush
 
       cmd = [base_command, "APP_BUNDLE_PATH=#{user_app}", cucumber_options, *test_files].compact*' '
 
       env = {
           AUTOTEST: '1',
-          DEVICE_ENDPOINT: "http://localhost:#{device['CalabashServerPort']}",
+          DEVICE_ENDPOINT: device_endpoint,
           DEVICE_TARGET: device_target,
           DEVICE_INFO: device_info,
           TEST_USER: device[:user],
@@ -125,6 +131,7 @@ module ParallelCalabash
           TEST_PROCESS_NUMBER: (process_number+1).to_s,
           SCREENSHOT_PATH: "pc_#{(process_number+1).to_s}_"
       }
+      env['BUNDLE_ID'] = ENV['BUNDLE_ID'] if ENV['BUNDLE_ID']
       exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}='#{v}';export #{k}" }.join(separator)
 
       cmd = [ exports,  "#{device['init'] || ''}", "cd #{File.absolute_path('.')}", "umask 002", cmd].join(separator)
@@ -132,7 +139,12 @@ module ParallelCalabash
       "ssh #{remote} bash -lc \"#{cmd}\" 2>&1"
     end
 
+    def version(simulator)
+      simulator.match('\d+-\d+$').to_s.gsub('-', '.')
+    end
+
     def prepare_for_parallel_execution
+      # copy-chown all the files, and set everything group-writable.
       Find.find('.') do |path|
         if File.file?(path) && !File.stat(path).owned?
           temp = "#{path}......"
