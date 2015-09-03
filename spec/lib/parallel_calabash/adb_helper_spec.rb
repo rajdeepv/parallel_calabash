@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'minitest/mock'
 require 'parallel_calabash/adb_helper'
 describe ParallelCalabash::AdbHelper do
 
@@ -32,8 +32,27 @@ end
 describe ParallelCalabash::IosHelper do
   describe :finds_user_configs do
     it 'should return all user configs' do
-      expect(ParallelCalabash::IosHelper.new([], File.dirname(__FILE__) + "/users/*/config")
-                 .connected_devices_with_model_info).to eq [{"CalabashServerPort"=>"6800", :user=>"user1"}, {"CalabashServerPort"=>"6802", :user=>"user2"}]
+      expect(ParallelCalabash::IosHelper.new([], {}, File.dirname(__FILE__) + '/users/*/config')
+                 .connected_devices_with_model_info).to eq [
+                                                               {calabash_server_port: '6800', user: 'user1'},
+                                                               {device_endpoint: 'http://my.phone:6802', user: 'user2'}
+                                                           ]
+    end
+  end
+
+  describe :handles_plain_user do
+    it 'should have a null user if so configured' do
+      file = MiniTest::Mock.new
+      file.expect(:readlines, %w(some=value user))
+      expect(ParallelCalabash::IosHelper.new([], {}, nil)
+                 .read_config(file, 'someone')).to eq({user: nil, some: 'value'})
+    end
+
+    it 'should have a real user if none configured' do
+      file = MiniTest::Mock.new
+      file.expect(:readlines, ['some=value'])
+      expect(ParallelCalabash::IosHelper.new([], {}, nil)
+                 .read_config(file, 'someone')).to eq({user: 'someone', some: 'value'})
     end
   end
 end

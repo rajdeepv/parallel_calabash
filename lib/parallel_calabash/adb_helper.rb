@@ -49,41 +49,41 @@ module ParallelCalabash
   class IosHelper
     include ParallelCalabash::DevicesHelper
 
-    def initialize(filter = [], user_glob = '/Users/*/.parallel-calabash')
-      # Each user:
-      # 1. Must have the qa user in their .ssh/allowed_keys
-      # 2. Should configure the same ruby - e.g. ln -s ~qa/.rvm ~/.rvm
-      # 3. Needs a .parallel-calabash like this:
-      #   $ cat ~/.parallel-calabash
-      #   CalabashServerPort=38003
-      #   init=[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+    def initialize(filter = [], default_device = {}, user_glob = '/Users/*/.parallel-calabash.*')
+      # See
 
       @filter = filter
       @user_glob = user_glob
+      @default_device = default_device
     end
 
     def connected_devices_with_model_info
       # For now, just mark available users with this .file in their $HOME.
-      puser_dirs = Dir.glob(@user_glob)
-      configs = puser_dirs.collect { |file_name| read_config(file_name) }.compact
-      configs.sort_by!{|p| p['order'] || p[:user]}
-      @filter.empty? ? configs : configs.select { |c| c.keys.find{ |k| k.to_s.match(@filter.join('|')) } }
+      puser_dirs = Dir.glob(@user_glob).select { |d| d.match(/\.\d+$/) }
+      configs = puser_dirs.collect { |file_name| read_config_file(file_name) }.compact
+      configs.sort_by!{|p| p['order'] || p[:user] || p[:device_info] || p[:calabash_server_port]}
+      configs = @filter.empty? ? configs : configs.select do |c|
+        c.keys.find{ |k| k.to_s.match(@filter.join('|')) } ||
+            c.values.find{ |k| k.to_s.match(@filter.join('|'))  }
+      end
+      configs.empty? ? [@default_device] : configs
     end
 
-    def read_config(file_name)
+    def read_config_file(file_name)
       user = File.basename(File.dirname(file_name))
-      config = File.open(file_name) do |file|
-        pairs = file.readlines.inject({}) do |h, l|
-          p = l.strip.split('=', 2)
-          h.merge({p[0] => p[1]})
-        end
-        pairs.merge({user: user})
-      end
-      if config.has_key?('CalabashServerPort') || config.has_key?('deviceEndpoint')
+      config = File.open(file_name) { |file| read_config(file, user) }
+      if config.has_key?(:calabash_server_port) || config.has_key?(:device_endpoint)
         config
       else
-        puts "User #{user} must define either CalabashServerPort or deviceEndpoint in #{config}"
+        puts "User #{user} must define either 'calabash_server_port' or 'device_endpoint' in #{config}"
         nil
+      end
+    end
+
+    def read_config(file, user)
+      file.readlines.inject({user: user}) do |h, l|
+        p = l.strip.split('=', 2)
+        h.merge(p[0] ? {p[0].to_sym => p[1]} : {})
       end
     end
   end

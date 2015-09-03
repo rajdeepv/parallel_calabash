@@ -17,7 +17,13 @@ module ParallelCalabash
       @helper = if options.has_key?(:apk_path)
                   ParallelCalabash::AdbHelper.new(options[:filter])
                 else
-                  ParallelCalabash::IosHelper.new(options[:filter])
+                  ParallelCalabash::IosHelper.new(
+                      options[:filter],
+                      {
+                          device_target: options[:device_target],
+                          device_endpoint: options[:device_endpoint],
+                      }
+                  )
                 end
       @runner = if options.has_key?(:apk_path)
                   ParallelCalabash::AndroidRunner.new(@helper, options[:mute_output])
@@ -49,7 +55,7 @@ module ParallelCalabash
         test_results = Parallel.map_with_index(
             groups,
             :in_threads => threads,
-            :finish => lambda { |_, i, _|  complete.push(i); print complete }) do |group, index|
+            :finish => lambda { |_, i, _|  complete.push(i); print complete, "\n" }) do |group, index|
           @runner.run_tests(group, index, @options)
         end
         puts 'All threads complete'

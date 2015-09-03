@@ -29,6 +29,14 @@ def parse_arguments(arguments)
       options[:app_path] = app_path
     end
 
+    opts.on("--device_target target", "ios target if no .parallel-calabash config") do |device_target|
+      options[:device_target] = device_target
+    end
+
+    opts.on("--device_endpoint endpoint", "ios endpoint if no .parallel-calabash config") do |device_endpoint|
+      options[:device_endpoint] = device_endpoint
+    end
+
     opts.on("--simulator type", "for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'") do |simulator|
       options[:simulator] = simulator
     end
