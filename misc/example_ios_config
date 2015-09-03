@@ -1,0 +1,41 @@
+# ----------------------------------
+# One user per device/simulator: this appears to be an Apple restriction
+# ----------------------------------
+# Primary user runs the parallel_calabash command.
+# Configurations ~/.parallel_calabash.n sought in all machine users; qualifying users are 'test' users.
+# Test users allow the primary user ssh access without passwords, via .ssh/authorized_keys and the 'init' field's
+# command is executed before cucumber is invoked.
+init=[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# The primary user can instead specify 'user' on a line by itself to use direct commands instead of going via ssh.
+# (This is how the no-config default operation works; 'user' implies no 'init', but that is not enforced.)
+user
+
+# ----------------------------------
+# Simulator set-up: Mainly allocates ports for each user's simulator.
+# ----------------------------------
+# One of these files in each test user's ~/.parallel_calabash.1 file
+
+# Required:
+# calabash_server_port=38003
+# Optional:
+# simulator=iPhone 6 (8.4 Simulator)
+
+# ----------------------------------
+# Device set-up: Mainly associates ip addresses with device udids for each user's device
+# ----------------------------------
+
+# Required:
+# instruments -s devices
+device_target=6708212163436da3f35a989ad1f021bcf1c73953
+device_info=6708212163436da3f35a989ad1f021bcf1c73953
+# Settings> Network> Wifi> (i)> ip address + :37265
+device_endpoint=http://192.168.26.206:37265
+
+# Optional:
+# device_name=ios-iphone5c-annaflower (8.4.1)
+
+
+# Set other random keys for device filtering
+filter=some-group
+
