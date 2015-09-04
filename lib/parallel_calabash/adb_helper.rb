@@ -80,7 +80,7 @@ module ParallelCalabash
     end
 
     def read_config(file, user)
-      file.readlines.inject({user: user}) do |h, l|
+      file.readlines.grep(/^\s*[^#]/).inject({user: user}) do |h, l|
         p = l.strip.split('=', 2)
         h.merge(p[0] ? {p[0].to_sym => p[1]} : {})
       end
