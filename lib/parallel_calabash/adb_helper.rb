@@ -49,7 +49,7 @@ module ParallelCalabash
   class IosHelper
     include ParallelCalabash::DevicesHelper
 
-    def initialize(filter = nil, default_device = nil, user_glob = '/Users/*/.parallel-calabash*')
+    def initialize(filter = nil, default_device = nil, user_glob = '/Users/*/.parallel_calabash*')
       @filter = filter || []
       puts "FILTER #{@filter} from #{filter}"
       @default_device = default_device || {}

@@ -169,6 +169,7 @@ module ParallelCalabash
       end
       FileUtils.chmod_R('g+w', 'build/reports')
       FileUtils.chmod('g+w', Dir['*'])
+      FileUtils.chmod('g+w', '.')
     end
 
     def create_simulator(device_name, ssh, simulator)
