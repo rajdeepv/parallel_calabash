@@ -46,7 +46,7 @@ def parse_arguments(arguments)
     end
 
     opts.on("-f", "--filter filter", "Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','") do |filter_opts|
-      options[:filter] = filter_opts.split(",")
+      options[:filter] = filter_opts.split(',').grep(/./)
     end
 
     opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
