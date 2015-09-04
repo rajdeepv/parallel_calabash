@@ -32,11 +32,18 @@ end
 describe ParallelCalabash::IosHelper do
   describe :finds_user_configs do
     it 'should return all user configs' do
-      expect(ParallelCalabash::IosHelper.new([], {}, File.dirname(__FILE__) + '/users/*/config*')
+      expect(ParallelCalabash::IosHelper.new({a: 1}[:filter], {}, File.dirname(__FILE__) + '/users/*/config*')
                  .connected_devices_with_model_info).to eq [
                                                                {calabash_server_port: '6800', user: 'user1'},
                                                                {device_endpoint: 'http://my.phone:6802', user: 'user2'}
                                                            ]
+    end
+  end
+
+  describe :filters_user_configs do
+    it 'should return one user config' do
+      expect(ParallelCalabash::IosHelper.new({filter: 'endpoint'}[:filter].split(',').grep(/./), {}, File.dirname(__FILE__) + '/users/*/config*')
+                 .connected_devices_with_model_info).to eq [{device_endpoint: 'http://my.phone:6802', user: 'user2'}]
     end
   end
 
