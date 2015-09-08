@@ -77,9 +77,10 @@ module ParallelCalabash
   class IosRunner
     include Runner
 
-    def initialize(device_helper, silence)
+    def initialize(device_helper, silence, skip_ios_ping_check)
       @device_helper = device_helper
       @silence = silence
+      @skip_ios_ping_check = skip_ios_ping_check
     end
 
     def base_command
@@ -93,7 +94,6 @@ module ParallelCalabash
           options[:simulator] || '0-0')
       $stdout.print "#{process_number}>> Command: #{test}\n"
       $stdout.flush
-
 
       o = execute_command_for_process(process_number, test)
       device = @device_helper.device_for_process process_number
@@ -121,6 +121,12 @@ module ParallelCalabash
       device_endpoint = device[:device_endpoint] || "http://localhost:#{device[:calabash_server_port]}"
       $stdout.print "#{process_number}>> Device: #{device_info} = #{device_name} = #{device_target}\n"
       $stdout.flush
+
+      unless @skip_ios_ping_check
+        hostname = device_endpoint.match("http://(.*):").captures.first
+        pingable = system "ping -c 1 -o #{hostname}"
+        fail "Cannot ping device_endpoint host: #{hostname}" unless pingable
+      end
 
       cmd = [base_command, "APP_BUNDLE_PATH=#{user_app}", cucumber_options, *test_files].compact*' '
 
@@ -202,8 +208,9 @@ module ParallelCalabash
 
       # Set plist.
 
+      system("/usr/libexec/PlistBuddy -c 'Delete CalabashServerPort integer #{device[:calabash_server_port]}' #{user_app}/Info.plist")
       unless system("/usr/libexec/PlistBuddy -c 'Add CalabashServerPort integer #{device[:calabash_server_port]}' #{user_app}/Info.plist")
-        raise 'Unable to set CalabashServerPort'
+        raise "Unable to set CalabashServerPort in #{user_app}/Info.plist"
       end
 
       puts "User app: #{user_app}"

@@ -65,7 +65,22 @@ module ParallelCalabash
         c.keys.find{ |k| k.to_s.match(@filter.join('|')) } ||
             c.values.find{ |k| k.to_s.match(@filter.join('|'))  }
       end
+      check_simulator_ports(configs)
       configs.empty? ? [@default_device] : configs
+    end
+
+    def check_simulator_ports(configs)
+      configs.inject({}) do |h, c|
+        p = c[:calabash_server_port]
+        next h unless p
+        fail_on_port_clash(h, p.to_i)
+      end
+    end
+
+    def fail_on_port_clash(h, p)
+      fail "calabash_server_port=#{p} multiply specified" if h[p]
+      h[p] = true
+      h
     end
 
     def read_config_file(file_name)

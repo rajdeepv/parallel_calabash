@@ -28,7 +28,7 @@ module ParallelCalabash
       @runner = if options.has_key?(:apk_path)
                   ParallelCalabash::AndroidRunner.new(@helper, options[:mute_output])
                 else
-                  ParallelCalabash::IosRunner.new(@helper, options[:mute_output])
+                  ParallelCalabash::IosRunner.new(@helper, options[:mute_output], options[:skip_ios_ping_check])
                 end
     end
 

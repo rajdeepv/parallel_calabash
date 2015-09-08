@@ -49,6 +49,10 @@ def parse_arguments(arguments)
       options[:filter] = filter_opts.split(',').grep(/./)
     end
 
+    opts.on("--skip_ios_ping_check", "Skip the connectivity test for iOS devices") do
+      options[:skip_ios_ping_check] = true
+    end
+
     opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
       options[:cucumber_options] = cucumber_opts
     end
