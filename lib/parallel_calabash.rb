@@ -20,8 +20,8 @@ module ParallelCalabash
                   ParallelCalabash::IosHelper.new(
                       options[:filter],
                       {
-                          device_target: options[:device_target],
-                          device_endpoint: options[:device_endpoint],
+                          DEVICE_TARGET: options[:device_target],
+                          DEVICE_ENDPOINT: options[:device_endpoint],
                       }
                   )
                 end

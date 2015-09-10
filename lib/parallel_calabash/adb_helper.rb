@@ -51,51 +51,56 @@ module ParallelCalabash
 
     def initialize(filter = nil, default_device = nil, user_glob = '/Users/*/.parallel_calabash*')
       @filter = filter || []
-      puts "FILTER #{@filter} from #{filter}"
       @default_device = default_device || {}
       @user_glob = user_glob
     end
 
     def connected_devices_with_model_info
-      # For now, just mark available users with this .file in their $HOME.
+      return @devices if @devices
       puser_dirs = Dir.glob(@user_glob).select { |d| d.match(/\/.?[^.~]+(\.\d+)?$/) }
       configs = puser_dirs.collect { |file_name| read_config_file(file_name) }.compact
-      configs.sort_by!{|p| p['order'] || p[:user] || p[:device_info] || p[:calabash_server_port]}
+      configs.sort_by!{|p| p[:ORDER] || p[:USER] || p[:DEVICE_INFO] || p[:CALABASH_SERVER_PORT]}
       configs = @filter.empty? ? configs : configs.select do |c|
         c.keys.find{ |k| k.to_s.match(@filter.join('|')) } ||
             c.values.find{ |k| k.to_s.match(@filter.join('|'))  }
       end
-      check_simulator_ports(configs)
-      configs.empty? ? [@default_device] : configs
+      configs = filter_unconnected_devices(configs)
+      assert_unique_simulator_ports(configs)
+      @devices = configs.empty? ? [@default_device] : configs
     end
 
-    def check_simulator_ports(configs)
+    def filter_unconnected_devices(configs)
+      udids =  %x(instruments -s devices).each_line.map{|n| n.match(/\[(.*)\]/) && $1}.flatten.compact
+      configs.find_all {|c| !c[:DEVICE_TARGET] || !udids.grep(c[:DEVICE_TARGET]).empty?}
+    end
+
+    def assert_unique_simulator_ports(configs)
       configs.inject({}) do |h, c|
-        p = c[:calabash_server_port]
+        p = c[:CALABASH_SERVER_PORT]
         next h unless p
-        fail_on_port_clash(h, p.to_i)
+        fail_on_port_clash(h, p.to_i, c)
       end
     end
 
-    def fail_on_port_clash(h, p)
-      fail "calabash_server_port=#{p} multiply specified" if h[p]
-      h[p] = true
+    def fail_on_port_clash(h, p, c)
+      fail "CALABASH_SERVER_PORT=#{p} already used by #{h[p]}" if h[p]
+      h[p] = c
       h
     end
 
     def read_config_file(file_name)
       user = File.basename(File.dirname(file_name))
       config = File.open(file_name) { |file| read_config(file, user) }
-      if config.has_key?(:calabash_server_port) || config.has_key?(:device_endpoint)
+      if config.has_key?(:CALABASH_SERVER_PORT) || config.has_key?(:DEVICE_ENDPOINT)
         config
       else
-        puts "User #{user} must define either 'calabash_server_port' or 'device_endpoint' in #{config}"
+        puts "User #{user} must define either 'CALABASH_SERVER_PORT' or 'DEVICE_ENDPOINT' in #{config}"
         nil
       end
     end
 
     def read_config(file, user)
-      file.readlines.grep(/^\s*[^#]/).inject({user: user}) do |h, l|
+      file.readlines.grep(/^\s*[^#]/).inject({USER: user}) do |h, l|
         p = l.strip.split('=', 2)
         h.merge(p[0] ? {p[0].to_sym => p[1]} : {})
       end
