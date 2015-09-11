@@ -22,7 +22,8 @@ module ParallelCalabash
                       {
                           DEVICE_TARGET: options[:device_target],
                           DEVICE_ENDPOINT: options[:device_endpoint],
-                      }
+                      },
+                      options[:ios_config_file]
                   )
                 end
       @runner = if options.has_key?(:apk_path)

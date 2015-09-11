@@ -117,7 +117,7 @@ module ParallelCalabash
       device_name = device[:DEVICE_NAME] || "PCal-#{device[:USER]}"
       device_simulator = device[:SIMULATOR] || simulator
       device_target = device[:DEVICE_TARGET] || "#{device_name} (#{version(device_simulator)} Simulator)"
-      device_info = device[:DEVICE_INFO] || (device[:USER] ? create_simulator(device_name, remote, simulator) : '')
+      device_info = device[:DEVICE_TARGET] || (device[:USER] ? create_simulator(device_name, remote, simulator) : '')
       device_endpoint = device[:DEVICE_ENDPOINT] || "http://localhost:#{device[:CALABASH_SERVER_PORT]}"
       $stdout.print "#{process_number}>> Device: #{device_info} = #{device_name} = #{device_target}\n"
       $stdout.flush

@@ -25,20 +25,24 @@ def parse_arguments(arguments)
       options[:apk_path] = apk_path
     end
 
-    opts.on("--app app_path", "app file path") do |app_path|
+    opts.on('--app app_path', 'app file path') do |app_path|
       options[:app_path] = app_path
     end
 
-    opts.on("--device_target target", "ios target if no .parallel-calabash config") do |device_target|
+    opts.on('--device_target target', 'ios target if no .parallel-calabash config') do |device_target|
       options[:device_target] = device_target
     end
 
-    opts.on("--device_endpoint endpoint", "ios endpoint if no .parallel-calabash config") do |device_endpoint|
+    opts.on('--device_endpoint endpoint', 'ios endpoint if no .parallel-calabash config') do |device_endpoint|
       options[:device_endpoint] = device_endpoint
     end
 
-    opts.on("--simulator type", "for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'") do |simulator|
+    opts.on('--simulator type', "for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'") do |simulator|
       options[:simulator] = simulator
+    end
+
+    opts.on('--ios_config file', 'for ios, configuration for devices and users') do |ios_config_file|
+      options[:ios_config_file] = ios_config_file
     end
 
     opts.on("-d", "--distribution-tag tag", "divide features into groups as per occurrence of given tag") do |distribution_tag|
@@ -49,7 +53,7 @@ def parse_arguments(arguments)
       options[:filter] = filter_opts.split(',').grep(/./)
     end
 
-    opts.on("--skip_ios_ping_check", "Skip the connectivity test for iOS devices") do
+    opts.on('--skip_ios_ping_check', 'Skip the connectivity test for iOS devices') do
       options[:skip_ios_ping_check] = true
     end
 

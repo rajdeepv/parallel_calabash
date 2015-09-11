@@ -9,7 +9,7 @@ describe ParallelCalabash::AdbHelper do
     end
 
     it 'should match devices if there is a space after the word device' do
-       expect(ParallelCalabash::AdbHelper.new([]).device_id_and_model("emulator-5554  device ")).to eq \
+      expect(ParallelCalabash::AdbHelper.new([]).device_id_and_model("emulator-5554  device ")).to eq \
          ["emulator-5554", nil]
     end
 
@@ -30,36 +30,80 @@ describe ParallelCalabash::AdbHelper do
 end
 
 describe ParallelCalabash::IosHelper do
-  describe :finds_user_configs do
-    it 'should return all user configs' do
-      expect(ParallelCalabash::IosHelper.new({a: 1}[:filter], {}, File.dirname(__FILE__) + '/users/*/config*')
-                 .connected_devices_with_model_info).to eq [
-                                                               {calabash_server_port: '6800', user: 'user1'},
-                                                               {device_endpoint: 'http://my.phone:6802', user: 'user2'}
-                                                           ]
+  describe :test_apply_filter do
+    it 'Does nothing with no filters' do
+      expect(ParallelCalabash::IosHelper.new([], nil, {}, '')
+                 .apply_filter([{any: 'thing'}, {what: 'soever'}]))
+          .to eq [{any: 'thing'}, {what: 'soever'}]
+    end
+
+    it 'Excludes anything not mentioned' do
+      expect(ParallelCalabash::IosHelper.new(['yes'], nil, {}, '')
+                 .apply_filter([{any: 'thing'}, {what: 'soever'}]))
+          .to eq []
+    end
+
+    it 'Excludes only things not mentioned' do
+      expect(ParallelCalabash::IosHelper.new(['aa', 'bb'], nil, {}, '')
+                 .apply_filter([{eaa: 'thing', ecc: 'thing'}, {what: 'aa', so: 'ebb'}, {ever: 'thing'}]))
+          .to eq [{eaa: 'thing', ecc: 'thing'}, {what: 'aa', so: 'ebb'}]
     end
   end
 
-  describe :filters_user_configs do
-    it 'should return one user config' do
-      expect(ParallelCalabash::IosHelper.new({filter: 'endpoint'}[:filter].split(',').grep(/./), {}, File.dirname(__FILE__) + '/users/*/config*')
-                 .connected_devices_with_model_info).to eq [{device_endpoint: 'http://my.phone:6802', user: 'user2'}]
+  describe :test_remove_unconnected_devices do
+    it 'Removes unconnected devices' do
+      expect(ParallelCalabash::IosHelper.new(nil, nil, {},
+                                             "name [udid1]\nname2 [udid2]\nname3 [udid-unknown]")
+                 .remove_unconnected_devices([{DEVICE_TARGET: 'udid1'},
+                                              {DEVICE_TARGET: 'udid2'},
+                                              {DEVICE_TARGET: 'udid-unplugged'}]))
+          .to eq [{DEVICE_TARGET: "udid1"}, {DEVICE_TARGET: "udid2"}]
     end
   end
 
-  describe :handles_plain_user do
-    it 'should have a null user if so configured' do
-      file = MiniTest::Mock.new
-      file.expect(:readlines, %w(some=value user))
-      expect(ParallelCalabash::IosHelper.new([], {}, nil)
-                 .read_config(file, 'someone')).to eq({user: nil, some: 'value'})
+  describe :test_compute_simulators do
+    it 'allocates ports to users' do
+      expect(ParallelCalabash::IosHelper.new([], {}, {USERS:['a', 'b'], INIT:'foo'}, '')
+                 .compute_simulators)
+          .to eq [{USER:'a', INIT:'foo', CALABASH_SERVER_PORT: 28000},
+                  {USER:'b', INIT:'foo', CALABASH_SERVER_PORT: 28001}]
     end
 
-    it 'should have a real user if none configured' do
-      file = MiniTest::Mock.new
-      file.expect(:readlines, ['some=value'])
-      expect(ParallelCalabash::IosHelper.new([], {}, nil)
-                 .read_config(file, 'someone')).to eq({user: 'someone', some: 'value'})
+    it 'allocates other ports to users' do
+      expect(ParallelCalabash::IosHelper.new([], {}, {USERS:['a', 'b'], INIT:'foo', CALABASH_SERVER_PORT:100}, '')
+                 .compute_simulators)
+          .to eq [{USER:'a', INIT:'foo', CALABASH_SERVER_PORT: 100},
+                  {USER:'b', INIT:'foo', CALABASH_SERVER_PORT: 101}]
+    end
+  end
+
+  describe :test_compute_devices do
+    it 'returns nothing with no users' do
+      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}]}, 'name [udid]')
+                 .compute_devices)
+          .to eq []
+    end
+
+    it 'fails with no devices' do
+      expect { ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
+                                                        USERS: ['a']}, 'name [udon\'t]')
+                   .compute_devices }
+          .to raise_error(RuntimeError)
+    end
+
+    it 'allocates users to devices' do
+      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
+                                                      USERS: ['a', 'b']}, 'name [udid]')
+                 .compute_devices)
+          .to eq [{DEVICE_TARGET: "udid", USER: "a", INIT: ""}]
+    end
+
+    it 'allocates users init to devices' do
+      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
+                                                      USERS: ['a', 'b'],
+                                                      INIT: 'start'}, 'name [udid]')
+                 .compute_devices)
+          .to eq [{DEVICE_TARGET: "udid", USER: "a", INIT: "start"}]
     end
   end
 end
