@@ -41,8 +41,8 @@ def parse_arguments(arguments)
       options[:simulator] = simulator
     end
 
-    opts.on('--ios_config file', 'for ios, configuration for devices and users') do |ios_config_file|
-      options[:ios_config_file] = ios_config_file
+    opts.on('--ios_config file', 'for ios, configuration for devices and users') do |ios_config|
+      options[:ios_config] = ios_config
     end
 
     opts.on("-d", "--distribution-tag tag", "divide features into groups as per occurrence of given tag") do |distribution_tag|
