@@ -53,7 +53,7 @@ module ParallelCalabash
       cmd = command_for_test(
           process_number, base_command, options[:apk_path],
           "#{options[:cucumber_options]} #{options[:cucumber_reports]}", test_files)
-      $stdout.print "#{process_number}>> Command: #{test}\n"
+      $stdout.print "#{process_number}>> Command: #{cmd}\n"
       $stdout.flush
       execute_command_for_process(process_number, cmd)
     end
