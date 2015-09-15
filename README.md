@@ -42,7 +42,8 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
 
 ## Usage iOS
 
-Example: parallel_calabash -a my.apk -o '<cucumber opts>' -r '<cucumber_reports>' features/
+Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneos -o '-cucumber -opts' -r '-cucumber -reports>' features/
+
     -h, --help                       Show this message
     -v, --version                    Show version
         --app app_path               app file path
@@ -60,26 +61,27 @@ Example: parallel_calabash -a my.apk -o '<cucumber opts>' -r '<cucumber_reports>
         --concurrent                 Run tests concurrently. Each test will run once on each device
         --group-by-scenarios         Distribute equally as per scenarios. This uses cucumber dry run
 
-### iOS configuration
+### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
 * Each device or simulator must run as a separate user account (Settings > Users & Groups)
-** As the main account - the one that runs parallel_calabash - run ssh-keygen
-** As each test account (which can include the main account)
-*** Log in to the user graphically
-*** Settings > Sharing > Remote Login > Allow access for main account
-*** Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester/.ssh/authorized_keys
-*** Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
-*** If you want to test on simulators, you should also:
-**** Settings > Sharing > Screen sharing > Allow access for all users and set a VNC password
-**** And make sure every test user has a desktop open (e.g. TightVNC) when you start testing.
-* Create .parallel_calabash based on the following
-** (You have two files .parallel_calabash.iphoneos (for devices) and .parallel_calabash.iphonesimulator (for simulators))
+* As the main account - the one that runs parallel_calabash - run ssh-keygen
+* As each test account (which can include the main account)
+1. Log in to the user graphically
+2. Settings > Sharing > Remote Login > Allow access for main account
+3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester/.ssh/authorized_keys
+4. Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
+* If you want to test on simulators, you should also:
+1. Settings > Sharing > Screen sharing > Allow access for all users and set a VNC password
+2. And make sure every test user has a desktop open (e.g. TightVNC) when you start testing.
+
+Create one or two configs - one for devices, one for simulators - as follows:
 
     {
       USERS: [ 'qa', 'qa2', 'qa3' ],
-      # CALABASH_SERVER_PORT: 3800,
       INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
+      # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
+      # CALABASH_SERVER_PORT: 3800,
       # Omit 'DEVICES' entirely if you're only testing on simulators.
       DEVICES: [
         {
