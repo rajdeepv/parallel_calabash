@@ -75,9 +75,13 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 * If you want to test on simulators, additionally:
 1. For each test user, Settings > Sharing > Screen sharing > Allow access for all users (at least, main account)
 2. As your primary user, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
-3. As your primary user, copy misc/autostart_test_users.app out of the Gem and add it into Settings > User & Groups > Login Items
-4. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (unless your simulator .parallel_config is called something else, in which case ln -s that to ~/.parallel_calabash.autostart instead)
-5. Add a PASSWORD: 'whatever', in your config.
+3. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (unless your simulator .parallel_config is called something else, in which case ln -s that to ~/.parallel_calabash.autostart instead)
+4. Add a PASSWORD: 'whatever', in your config - same password for all test users.
+5. Copy misc/autostart_test_users.app out of the Gem, into the system /Applications/ directory
+6. Run /Applications/autostart_test_users to make it complain about accessibility
+8. In Settings > Privacy & Security > Privacy > Accessibility to enable it - close Settings
+9. Re-run it, and it should work.
+10. Add it into Settings > User & Groups > Login Items
  
 Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
 
