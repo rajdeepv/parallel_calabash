@@ -64,21 +64,33 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 ### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
-* Each device or simulator must run as a separate user account (Settings > Users & Groups)
+* Create as many test accounts as you have devices or simulators (Settings > Users & Groups)
 * As the main account - the one that runs parallel_calabash - run ssh-keygen
-* As each test account (which can include the main account)
-1. Log in to the user graphically
+* As each test account (which can include the main account, for devices)
+1. Log in to the user graphically (particularly if you're using simulators)
 2. Settings > Sharing > Remote Login > Allow access for main account
-3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester/.ssh/authorized_keys
+3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester1/.ssh/authorized_keys
 4. Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
-* If you want to test on simulators, you should also:
-1. Settings > Sharing > Screen sharing > Allow access for all users and set a VNC password
-2. And make sure every test user has a desktop open (e.g. TightVNC) when you start testing.
 
-Create one or two configs - one for devices, one for simulators - as follows:
+* If you want to test on simulators, additionally:
+1. For each test user, Settings > Sharing > Screen sharing > Allow access for all users (at least, main account)
+2. As your primary user, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
+3. To your primary account's .bash_profile, start up a Desktop for each simulator:
+
+Append this to your ~main_account/.bash_profile:
+
+    if [ "x$DISPLAY" ne "x" ]; then
+        ssh -N -L 6900:127.0.0.1:5900 tester1@localhost &
+        sleep 1
+        for i in  tester1 tester2 tester3 tester4 ; do
+          ./misc/opengui.applescript vnc://user:password@localhost:6900
+        done
+    fi
+ 
+Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
 
     {
-      USERS: [ 'qa', 'qa2', 'qa3' ],
+      USERS: [ 'tester1', 'tester2', 'tester3' ],
       INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
       # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
       # CALABASH_SERVER_PORT: 3800,
