@@ -1,0 +1,15 @@
+#!/bin/bash
+# Auto-starts the local ssh forwarding, and then opens a GUI for each of the test users.
+
+# Change this to your simulators' .parallel_calabash config file:
+PC_CONFIG=$HOME/.parallel_calabash
+
+USERS=$(ruby -le 'puts eval(File.read(ENV["PC_CONFIG"]))[:USERS].join(",")')
+ssh -N -L 6900:127.0.0.1:5900 ${THING%%,*}@localhost &
+
+# Not sure how to determine when ssh has its tunnel open.
+sleep 1
+
+for i in $USERS ; do
+    ${0%/*}/opengui.applescript vnc://user:password@localhost:6900
+done

@@ -75,17 +75,8 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 * If you want to test on simulators, additionally:
 1. For each test user, Settings > Sharing > Screen sharing > Allow access for all users (at least, main account)
 2. As your primary user, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
-3. To your primary account's .bash_profile, start up a Desktop for each simulator:
-
-Append this to your ~main_account/.bash_profile:
-
-    if [ "x$DISPLAY" ne "x" ]; then
-        ssh -N -L 6900:127.0.0.1:5900 tester1@localhost &
-        sleep 1
-        for i in  tester1 tester2 tester3 tester4 ; do
-          ./misc/opengui.applescript vnc://user:password@localhost:6900
-        done
-    fi
+3. As your primary user, copy misc/autostart_test_users.app out of the Gem and add it into Settings > User & Groups > Login Items
+4. If your ~/.parallel_calabash config file for simulators is called something different, edit misc/autostart_test_users.app/Contents/MacOS/autostart_test_users to correct it. 
  
 Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
 

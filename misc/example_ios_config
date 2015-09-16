@@ -1,41 +1,24 @@
-# ----------------------------------
-# One user per device/simulator: this appears to be an Apple restriction
-# ----------------------------------
-# Primary user runs the parallel_calabash command.
-# Configurations ~/.parallel_calabash.n sought in all machine users; qualifying users are 'test' users.
-# Test users allow the primary user ssh access without passwords, via .ssh/authorized_keys and the 'init' field's
-# command is executed before cucumber is invoked.
-init=[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# The primary user can instead specify 'user' on a line by itself to use direct commands instead of going via ssh.
-# (This is how the no-config default operation works; 'user' implies no 'init', but that is not enforced.)
-user
-
-# ----------------------------------
-# Simulator set-up: Mainly allocates ports for each user's simulator.
-# ----------------------------------
-# One of these files in each test user's ~/.parallel_calabash.1 file
-
-# Required:
-# calabash_server_port=38003
-# Optional:
-# simulator=iPhone 6 (8.4 Simulator)
-
-# ----------------------------------
-# Device set-up: Mainly associates ip addresses with device udids for each user's device
-# ----------------------------------
-
-# Required:
-# instruments -s devices
-device_target=6708212163436da3f35a989ad1f021bcf1c73953
-device_info=6708212163436da3f35a989ad1f021bcf1c73953
-# Settings> Network> Wifi> (i)> ip address + :37265
-device_endpoint=http://192.168.26.206:37265
-
-# Optional:
-# device_name=ios-iphone5c-annaflower (8.4.1)
-
-
-# Set other random keys for device filtering
-filter=some-group
-
+{
+  USERS: [ 'tester1', 'tester2', 'tester3' ],
+  INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
+  # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
+  # CALABASH_SERVER_PORT: 3800,
+  # Omit 'DEVICES' entirely if you're only testing on simulators.
+  DEVICES: [
+    {
+      NAME: 'ios-iphone5c-tinkywinkie (8.4.1)',
+      DEVICE_TARGET: '23984729837401987239874987239',
+      DEVICE_ENDPOINT: 'http://192.168.126.206:37265'
+    },
+    {
+      NAME: 'ios-iphone6plus-lala (8.4)',
+      DEVICE_TARGET: 'c987234987983458729375923485792345',
+      DEVICE_ENDPOINT: 'http://192.168.126.205:37265',
+    },
+    {
+      NAME: 'ios-iphone6plus-dipsy (8.4.1)',
+      DEVICE_TARGET: '98723498792873459872398475982347589',
+      DEVICE_ENDPOINT: 'http://192.168.126.207:37265',
+    }
+  ]
+}
