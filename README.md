@@ -76,7 +76,8 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 1. For each test user, Settings > Sharing > Screen sharing > Allow access for all users (at least, main account)
 2. As your primary user, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
 3. As your primary user, copy misc/autostart_test_users.app out of the Gem and add it into Settings > User & Groups > Login Items
-4. If your ~/.parallel_calabash config file for simulators is called something different, edit misc/autostart_test_users.app/Contents/MacOS/autostart_test_users to correct it. 
+4. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (unless your simulator .parallel_config is called something else, in which case ln -s that to ~/.parallel_calabash.autostart instead)
+5. Add a PASSWORD: 'whatever', in your config.
  
 Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
 
@@ -85,6 +86,8 @@ Create one or two configs - one to use when testing on devices, one for testing 
       INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
       # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
       # CALABASH_SERVER_PORT: 3800,
+      # You only need to give the test users' password if you want to run simulators.
+      # PASSWORD: 'testuserspassword',
       # Omit 'DEVICES' entirely if you're only testing on simulators.
       DEVICES: [
         {
