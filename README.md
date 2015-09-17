@@ -80,7 +80,7 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 5. Copy misc/autostart_test_users.app out of the Gem, into the system /Applications/ directory
 6. Run /Applications/autostart_test_users to make it complain about accessibility
 8. In Settings > Privacy & Security > Privacy > Accessibility to enable it - close Settings
-9. Re-run it, and it should work.
+9. Re-run it, and it should open a screen sharing session for each test user.
 10. Add it into Settings > User & Groups > Login Items
  
 Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
@@ -90,10 +90,10 @@ Create one or two configs - one to use when testing on devices, one for testing 
       INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
       # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
       # CALABASH_SERVER_PORT: 3800,
-      # You only need to give the test users' password if you want to run simulators.
+      # You only need to give the test users' password if you want to run autostart_test_users
       # PASSWORD: 'testuserspassword',
-      # You only need to set this if the default 6900 clashes with something.
-      # VNCFORWARD: 6900,
+      # You only need to set this if you want to run autostart_test_users and the default 6900 clashes with something.
+      # VNC_FORWARD: 6900,
       # Omit 'DEVICES' entirely if you're only testing on simulators.
       DEVICES: [
         {
