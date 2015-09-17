@@ -92,6 +92,8 @@ Create one or two configs - one to use when testing on devices, one for testing 
       # CALABASH_SERVER_PORT: 3800,
       # You only need to give the test users' password if you want to run simulators.
       # PASSWORD: 'testuserspassword',
+      # You only need to set this if the default 6900 clashes with something.
+      # VNCFORWARD: 6900,
       # Omit 'DEVICES' entirely if you're only testing on simulators.
       DEVICES: [
         {
