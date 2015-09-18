@@ -1,3 +1,3 @@
 module ParallelCalabash
-  VERSION = "0.1.3.pre6"
+  VERSION = "0.1.4.ios1"
 end
