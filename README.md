@@ -53,7 +53,7 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
         --simulator type             for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'
         --ios_config file            for ios, configuration for devices and users
     -d, --distribution-tag tag       divide features into groups as per occurrence of given tag
-    -f, --filter filter              Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','
+    -f, --filter filter              Filter devices to run tests against keys or values in config. Multiple filters seperated by ','
         --skip_ios_ping_check        Skip the connectivity test for iOS devices
     -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
     -r '[REPORTS]',                  generate these cucumber reports (not during filtering)
