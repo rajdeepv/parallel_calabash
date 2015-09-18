@@ -64,24 +64,24 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 ### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
-* Create as many test accounts as you have devices or simulators (Settings > Users & Groups)
-* As the main account - the one that runs parallel_calabash - run ssh-keygen
-* As each test account (which can include the main account, for devices)
-1. Log in to the user graphically (particularly if you're using simulators)
-2. Settings > Sharing > Remote Login > Allow access for main account
+* Create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
+* As the main account - the one that runs parallel_calabash: run ssh-keygen
+* As each test account:
+1. Log in to the user's desktop (particularly if you're using simulators) to let the computer set it up.
+2. Settings > Sharing > Remote Login > Allow access for main account (if not already permitted by Remote Management)
 3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester1/.ssh/authorized_keys
 4. Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
 
 * If you want to test on simulators, additionally:
-1. For each test user, Settings > Sharing > Screen sharing > Allow access for all users (at least, main account)
-2. As your primary user, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
-3. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (unless your simulator .parallel_config is called something else, in which case ln -s that to ~/.parallel_calabash.autostart instead)
-4. Add a PASSWORD: 'whatever', in your config - same password for all test users.
-5. Copy misc/autostart_test_users.app out of the Gem, into the system /Applications/ directory
-6. Run /Applications/autostart_test_users to make it complain about accessibility
-8. In Settings > Privacy & Security > Privacy > Accessibility to enable it - close Settings
+1. For each test user, Settings > Sharing > Screen sharing > Allow access (if not already permitted by Remote Management)
+3. As your primary user, once, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
+4. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (or whatever your simulators' config is called).
+5. Add a PASSWORD: 'whatever', in your config - same password for all test users.
+5. Copy misc/autostart_test_users.app from the Git repository into the system /Applications/ directory
+6. Run /Applications/autostart_test_users to make it complain about accessibility; close the connection request dialog
+8. In Settings > Privacy & Security > Privacy > Accessibility, enable it - close Settings
 9. Re-run it, and it should open a screen sharing session for each test user.
-10. Add it into Settings > User & Groups > Login Items
+10. Add it into Settings > User & Groups > Login Items, set BOOT_DELAY if you need to tune the post-login startup time.
  
 Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
 
