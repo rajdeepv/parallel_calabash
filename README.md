@@ -65,25 +65,9 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 
 * iOS testing is only supported on MacOS hosts.
 * Create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
-* As the main account - the one that runs parallel_calabash: run ssh-keygen
-* As each test account:
-1. Log in to the user's desktop (particularly if you're using simulators) to let the computer set it up.
-2. Settings > Sharing > Remote Login > Allow access for main account (if not already permitted by Remote Management)
-3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester1/.ssh/authorized_keys
-4. Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
+* As the main user, the one that runs parallel_calabash, create ~/.parallel_calabash.iphonesimulator and/or ~/.parallel_calabash.iphoneos
 
-* If you want to test on simulators, additionally:
-1. For each test user, Settings > Sharing > Screen sharing > Allow access (if not already permitted by Remote Management)
-3. As your primary user, once, run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
-4. As your primary user, run: ln -s ~/.parallel_config ~/.parallel_config.autostart  (or whatever your simulators' config is called).
-5. Add a PASSWORD: 'whatever', in your config - same password for all test users.
-5. Copy misc/autostart_test_users.app from the Git repository into the system /Applications/ directory
-6. Run /Applications/autostart_test_users to make it complain about accessibility; close the connection request dialog
-8. In Settings > Privacy & Security > Privacy > Accessibility, enable it - close Settings
-9. Re-run it, and it should open a screen sharing session for each test user.
-10. Add it into Settings > User & Groups > Login Items, set BOOT_DELAY if you need to tune the post-login startup time.
- 
-Create one or two configs - one to use when testing on devices, one for testing on simulators - as follows:
+As follows:
 
     {
       USERS: [ 'tester1', 'tester2', 'tester3' ],
@@ -114,6 +98,27 @@ Create one or two configs - one to use when testing on devices, one for testing 
       ]
     }
 
+* As the main account, run ssh-keygen
+* As each test account:
+1. Use Screen Sharing to log in to the user's desktop (particularly if you're using simulators) to let the computer set it up.
+2. Settings > Sharing > Remote Login > Allow access for main account (if not already permitted by Remote Management)
+3. Copy ~main_account/.ssh/id_rsa.pub into each test account's ~tester1/.ssh/authorized_keys
+4. Any other set-up, e.g. ln -s /Users/main_account/.rvm ~/.rvm
+
+* If you don't want to test on simulators, your set-up stops here.
+* If you want to test on simulators too...
+* ... for each test user, Settings > Sharing > Screen sharing > Allow access (if not already permitted by Remote Management)
+* ... (we were suprised that a mac mini can cheerfully run upwards of 7 simulators without much struggle)
+* ... and as your primary user:
+1. Run: sudo defaults write com.apple.ScreenSharing skipLocalAddressCheck -boolean YES
+2. Run: ln -s ~/.parallel_config.iphonesimulator ~/.parallel_config.autostart  (or whatever your simulators' config is called).
+3. Add a PASSWORD: 'whatever', in your config - same password for all test users.
+4. Copy misc/autostart_test_users.app from the Git repository into the system /Applications/ directory
+5. Run /Applications/autostart_test_users, skip the countdown, and see it complain about accessibility; close the connection request dialog
+6. In Settings > Privacy & Security > Privacy > Accessibility, allow it - close Settings
+7. Re-run it, skip the countdown, and it should open a screen sharing session for each test user.
+8. Add it into Settings > User & Groups > Login Items, set BOOT_DELAY if you need to tune the post-login startup time.
+ 
 
 ## REPORTING
 
