@@ -116,7 +116,10 @@ module ParallelCalabash
 
       device_name = device[:DEVICE_NAME] || "PCal-#{device[:USER]}"
       device_simulator = device[:SIMULATOR] || simulator
-      device_target = device[:DEVICE_TARGET] || "#{device_name} (#{version(device_simulator)} Simulator)"
+
+      # Device target changed in XCode 7, losing ' Simulator' for some reason.
+      maybe_simulator = @device_helper.xcode7? ? '' : ' Simulator'
+      device_target = device[:DEVICE_TARGET] || "#{device_name} (#{version(device_simulator)}#{maybe_simulator})"
       device_info = device[:DEVICE_TARGET] || (device[:USER] ? create_simulator(device_name, remote, simulator) : '')
       device_endpoint = device[:DEVICE_ENDPOINT] || "http://localhost:#{device[:CALABASH_SERVER_PORT]}"
       $stdout.print "#{process_number}>> Device: #{device_info} = #{device_name} = #{device_target}\n"
@@ -152,12 +155,12 @@ module ParallelCalabash
       end
     end
 
-    def udid(name)
-      name = name.gsub(/(\W)/, '\\\\\\1')
-      line = %x( instruments -s devices ).split("\n").grep(/#{name}/)
-      fail "Found #{line.size} matches for #{name}, expected 1" unless line.size == 1
-      line.first.match(/\[(\S+)\]/).captures.first.to_s
-    end
+    # def udid(name)
+    #   name = name.gsub(/(\W)/, '\\\\\\1')
+    #   line = %x( instruments -s devices ).split("\n").grep(/#{name}/)
+    #   fail "Found #{line.size} matches for #{name}, expected 1" unless line.size == 1
+    #   line.first.match(/\[(\S+)\]/).captures.first.to_s
+    # end
 
     def version(simulator)
       simulator.match('\d+-\d+$').to_s.gsub('-', '.')

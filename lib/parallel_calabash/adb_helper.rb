@@ -61,6 +61,10 @@ module ParallelCalabash
       @instruments = instruments || %x(instruments -s devices ; echo) # Bizarre workaround for xcode 7
     end
 
+    def xcode7?
+      !@instruments.match(' Simulator\)')
+    end
+
     def connected_devices_with_model_info
       return @devices if @devices
       if @config[:DEVICES]
