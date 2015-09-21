@@ -15,7 +15,7 @@ describe ParallelCalabash::Runner do
                  'base_command some.apk -some -options file1 file2'
     end
   end
-  
+
   describe :execute_command_for_process do
     adb_helper = MiniTest::Mock.new
     runner = ParallelCalabash::AndroidRunner.new(nil, true)

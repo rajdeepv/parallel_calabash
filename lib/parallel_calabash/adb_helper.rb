@@ -58,7 +58,7 @@ module ParallelCalabash
         else
           @config = File.exist?(config_file) ? eval(File.read(config_file)) : {}
       end
-      @instruments = instruments || %x(instruments -s devices)
+      @instruments = instruments || %x(instruments -s devices ; echo) # Bizarre workaround for xcode 7
     end
 
     def connected_devices_with_model_info
