@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH << File.expand_path("../../lib", __FILE__)
-require "parallel_calabash"
+require 'parallel_calabash'
 require 'parallel_calabash/version'
 require 'optparse'
 
@@ -9,7 +9,7 @@ def parse_arguments(arguments)
   options = {}
   opt_parser = OptionParser.new do |opts|
     opts.banner = "Usage: parallel_calabash [options]\n" \
-                "Example: parallel_calabash -a my.apk -o '<cucumber opts>' features/"
+                "Example: parallel_calabash -a my.apk -o '<cucumber opts>' -r '<cucumber_reports>' features/"
 
     opts.on("-h", "--help", "Show this message") do
       puts opts
@@ -25,16 +25,44 @@ def parse_arguments(arguments)
       options[:apk_path] = apk_path
     end
 
-      opts.on("-d", "--distribution-tag tag", "divide features into groups as per occurrence of given tag") do |distribution_tag|
+    opts.on('--app app_path', 'app file path') do |app_path|
+      options[:app_path] = app_path
+    end
+
+    opts.on('--device_target target', 'ios target if no .parallel-calabash config') do |device_target|
+      options[:device_target] = device_target
+    end
+
+    opts.on('--device_endpoint endpoint', 'ios endpoint if no .parallel-calabash config') do |device_endpoint|
+      options[:device_endpoint] = device_endpoint
+    end
+
+    opts.on('--simulator type', "for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'") do |simulator|
+      options[:simulator] = simulator
+    end
+
+    opts.on('--ios_config file', 'for ios, configuration for devices and users') do |ios_config|
+      options[:ios_config] = ios_config
+    end
+
+    opts.on("-d", "--distribution-tag tag", "divide features into groups as per occurrence of given tag") do |distribution_tag|
       options[:distribution_tag] = distribution_tag
     end
 
     opts.on("-f", "--filter filter", "Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','") do |filter_opts|
-      options[:filter] = filter_opts.split(",")
+      options[:filter] = filter_opts.split(',').grep(/./)
+    end
+
+    opts.on('--skip_ios_ping_check', 'Skip the connectivity test for iOS devices') do
+      options[:skip_ios_ping_check] = true
     end
 
     opts.on("-o", "--cucumber_opts '[OPTIONS]'", "execute with those cucumber options") do |cucumber_opts|
       options[:cucumber_options] = cucumber_opts
+    end
+
+    opts.on("-r", "--cucumber_reports '[REPORTS]'", "generate these cucumber reports (not during filtering)") do |cucumber_reports|
+      options[:cucumber_reports] = cucumber_reports
     end
 
     opts.on("--serialize-stdout", "Serialize stdout output, nothing will be written until everything is done") do |mute_output|
@@ -53,6 +81,8 @@ def parse_arguments(arguments)
 
   opt_parser.parse!(arguments)
   options[:feature_folder] = arguments
+  fail '-a apk and -p app are mutually exclusive' if options.has_key?(:apk_path) && options.has_key?(:app_path)
+  fail '-a apk or -p app is required' unless options.has_key?(:apk_path) || options.has_key?(:app_path)
   options
 rescue OptionParser::InvalidOption => e
   puts "Invalid arguments #{e}"
@@ -61,6 +91,6 @@ end
 
 options = parse_arguments(ARGV)
 
-ParallelCalabash.run_tests_in_parallel options
+ParallelCalabash::ParallelCalabashApp.new(options).run_tests_in_parallel
 
 

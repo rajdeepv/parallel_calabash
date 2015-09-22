@@ -1,0 +1,24 @@
+{
+  USERS: [ 'tester1', 'tester2', 'tester3' ],
+  INIT: '[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"',
+  # You only need to specify the port if the default clashes for you. Simulators start sequentially from this.
+  # CALABASH_SERVER_PORT: 3800,
+  # Omit 'DEVICES' entirely if you're only testing on simulators.
+  DEVICES: [
+    {
+      NAME: 'ios-iphone5c-tinkywinkie (8.4.1)',
+      DEVICE_TARGET: '23984729837401987239874987239',
+      DEVICE_ENDPOINT: 'http://192.168.126.206:37265'
+    },
+    {
+      NAME: 'ios-iphone6plus-lala (8.4)',
+      DEVICE_TARGET: 'c987234987983458729375923485792345',
+      DEVICE_ENDPOINT: 'http://192.168.126.205:37265',
+    },
+    {
+      NAME: 'ios-iphone6plus-dipsy (8.4.1)',
+      DEVICE_TARGET: '98723498792873459872398475982347589',
+      DEVICE_ENDPOINT: 'http://192.168.126.207:37265',
+    }
+  ]
+}
