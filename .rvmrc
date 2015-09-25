@@ -1,1 +1,1 @@
-rvm --create use ruby-1.9.3-p0@parallel_calabash
+rvm --create use ruby-2.1.1-p0@parallel_calabash
