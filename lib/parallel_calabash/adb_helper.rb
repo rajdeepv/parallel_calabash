@@ -81,8 +81,14 @@ module ParallelCalabash
       port = (@config[:CALABASH_SERVER_PORT] || 28000).to_i
       users = @config[:USERS] || []
       init = @config[:INIT] || ''
+      simulator = @config[:DEVICE_TARGET] || nil
       users.map.with_index do |u, i|
-        {USER: u, CALABASH_SERVER_PORT: port + i, INIT: init}
+        {}.tap do |my_hash|
+          my_hash[:USER] = u
+          my_hash[:CALABASH_SERVER_PORT] = port + i
+          my_hash[:INIT] = init
+          my_hash[:DEVICE_TARGET] = simulator unless simulator.nil?
+        end
       end
     end
 
