@@ -1,51 +1,5 @@
-require 'fileutils'
-
+require 'parallel_calabash/device_helper'
 module ParallelCalabash
-  module DevicesHelper
-    def device_for_process process_num
-      connected_devices_with_model_info[process_num]
-    end
-
-    def number_of_connected_devices
-      connected_devices_with_model_info.size
-    end
-  end
-
-  class AdbHelper
-    include ParallelCalabash::DevicesHelper
-
-    def initialize(filter = [])
-      @filter = filter
-    end
-
-    def connected_devices_with_model_info
-      begin
-        list =
-            `adb devices -l`.split("\n").collect do |line|
-              device = device_id_and_model(line)
-              filter_device(device)
-            end
-        list.compact
-      rescue
-        []
-      end
-    end
-
-    def device_id_and_model line
-      if line.match(/device(?!s)/)
-        [line.split(" ").first, line.scan(/model:(.*) device/).flatten.first]
-      end
-    end
-
-    def filter_device device
-      if @filter && !@filter.empty? && device
-        device unless @filter.collect { |f| device[0].match(f) || device[1].match(f) }.compact.empty?
-      else
-        device
-      end
-    end
-  end
-
   class IosHelper
     include ParallelCalabash::DevicesHelper
 
@@ -61,16 +15,13 @@ module ParallelCalabash
       @instruments = instruments || %x(instruments -s devices ; echo) # Bizarre workaround for xcode 7
     end
 
-    def xcode7?
-      !@instruments.match(' Simulator\)')
-    end
-
     def connected_devices_with_model_info
       return @devices if @devices
       if @config[:DEVICES]
         configs = apply_filter(compute_devices)
-        fail '** No devices (or users) unfiltered!' if configs.empty?
+        fail '** No devices unfiltered!' if configs.empty?
       else
+        %x( killall "iOS Simulator" )
         configs = apply_filter(compute_simulators)
         configs = configs.empty? ? [@default_simulator] : configs
       end
@@ -79,33 +30,25 @@ module ParallelCalabash
 
     def compute_simulators
       port = (@config[:CALABASH_SERVER_PORT] || 28000).to_i
-      users = @config[:USERS] || []
-      init = @config[:INIT] || ''
+      no_of_devices = @config[:NO_OF_DEVICES].to_i || 1
       simulator = @config[:DEVICE_TARGET] || nil
-      users.map.with_index do |u, i|
+      (1..no_of_devices).map do |i|
         {}.tap do |my_hash|
-          my_hash[:USER] = u
-          my_hash[:CALABASH_SERVER_PORT] = port + i
-          my_hash[:INIT] = init
-          my_hash[:DEVICE_TARGET] = simulator unless simulator.nil?
+          my_hash[:DEVICE_TYPE] = simulator unless simulator.nil?
+          my_hash[:DEVICE_TARGET] = "PCalSimulator_#{i}"
+          my_hash[:CALABASH_SERVER_PORT] = port + i - 1
         end
       end
     end
 
     def compute_devices
-      users = @config[:USERS] || []
-      init = @config[:INIT] || ''
+      port = (@config[:CALABASH_SERVER_PORT] || 28000).to_i
       devices = remove_unconnected_devices(@config[:DEVICES])
       fail 'Devices configured, but no devices attached!' if devices.empty?
       configs = devices.map.with_index do |d, i|
-        if users[i]
-          d[:USER] = users[i]
-          d[:INIT] = init
-          d
-        else
-          print "** No user for device #{d}"
-          nil
-        end
+        d[:CALABASH_SERVER_PORT] = port + i
+        d[:DEVICE] = true
+        d
       end
       configs.compact
     end

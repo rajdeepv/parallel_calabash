@@ -1,0 +1,186 @@
+[
+  {
+    "keyword": "Feature",
+    "name": "aaa feature",
+    "line": 1,
+    "description": "",
+    "id": "aaa-feature",
+    "uri": "spec/test_data/features/aaa.feature",
+    "elements": [
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 10,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 9
+          },
+          {
+            "name": "@runnable",
+            "line": 9
+          }
+        ],
+        "id": "aaa-feature;",
+        "type": "scenario"
+      },
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 16,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 15
+          },
+          {
+            "name": "@runnable",
+            "line": 15
+          }
+        ],
+        "id": "aaa-feature;",
+        "type": "scenario"
+      },
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 19,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 18
+          },
+          {
+            "name": "@runnable",
+            "line": 18
+          }
+        ],
+        "id": "aaa-feature;",
+        "type": "scenario"
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "bbb.feature",
+    "line": 1,
+    "description": "",
+    "id": "bbb.feature",
+    "uri": "spec/test_data/features/bbb.feature",
+    "elements": [
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 13,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 12
+          },
+          {
+            "name": "@runnable",
+            "line": 12
+          }
+        ],
+        "id": "bbb.feature;",
+        "type": "scenario"
+      },
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 16,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 15
+          },
+          {
+            "name": "@runnable",
+            "line": 15
+          }
+        ],
+        "id": "bbb.feature;",
+        "type": "scenario"
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "ccc.feature",
+    "line": 1,
+    "description": "",
+    "id": "ccc.feature",
+    "uri": "spec/test_data/features/ccc.feature",
+    "elements": [
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 11,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 10
+          },
+          {
+            "name": "@runnable",
+            "line": 10
+          }
+        ],
+        "id": "ccc.feature;",
+        "type": "scenario"
+      }
+    ]
+  },
+  {
+    "keyword": "Feature",
+    "name": "ddd.feature",
+    "line": 1,
+    "description": "",
+    "id": "ddd.feature",
+    "uri": "spec/test_data/features/ddd.feature",
+    "elements": [
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 7,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 6
+          },
+          {
+            "name": "@runnable",
+            "line": 6
+          }
+        ],
+        "id": "ddd.feature;",
+        "type": "scenario"
+      },
+      {
+        "keyword": "Scenario",
+        "name": "",
+        "line": 10,
+        "description": "",
+        "tags": [
+          {
+            "name": "@tag1",
+            "line": 9
+          },
+          {
+            "name": "@runnable",
+            "line": 9
+          }
+        ],
+        "id": "ddd.feature;",
+        "type": "scenario"
+      }
+    ]
+  }
+]

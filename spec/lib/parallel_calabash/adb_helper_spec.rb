@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'minitest/mock'
-require 'parallel_calabash/adb_helper'
+require 'parallel_calabash/android_helper'
+
 describe ParallelCalabash::AdbHelper do
 
   describe :device_id_and_model do
@@ -50,83 +51,4 @@ describe ParallelCalabash::AdbHelper do
     end
   end
 
-end
-
-describe ParallelCalabash::IosHelper do
-  describe :test_apply_filter do
-    it 'Does nothing with no filters' do
-      expect(ParallelCalabash::IosHelper.new([], nil, {}, '')
-                 .apply_filter([{any: 'thing'}, {what: 'soever'}]))
-          .to eq [{any: 'thing'}, {what: 'soever'}]
-    end
-
-    it 'Excludes anything not mentioned' do
-      expect(ParallelCalabash::IosHelper.new(['yes'], nil, {}, '')
-                 .apply_filter([{any: 'thing'}, {what: 'soever'}]))
-          .to eq []
-    end
-
-    it 'Excludes only things not mentioned' do
-      expect(ParallelCalabash::IosHelper.new(['aa', 'bb'], nil, {}, '')
-                 .apply_filter([{eaa: 'thing', ecc: 'thing'}, {what: 'aa', so: 'ebb'}, {ever: 'thing'}]))
-          .to eq [{eaa: 'thing', ecc: 'thing'}, {what: 'aa', so: 'ebb'}]
-    end
-  end
-
-  describe :test_remove_unconnected_devices do
-    it 'Removes unconnected devices' do
-      expect(ParallelCalabash::IosHelper.new(nil, nil, {},
-                                             "name [udid1]\nname2 [udid2]\nname3 [udid-unknown]")
-                 .remove_unconnected_devices([{DEVICE_TARGET: 'udid1'},
-                                              {DEVICE_TARGET: 'udid2'},
-                                              {DEVICE_TARGET: 'udid-unplugged'}]))
-          .to eq [{DEVICE_TARGET: "udid1"}, {DEVICE_TARGET: "udid2"}]
-    end
-  end
-
-  describe :test_compute_simulators do
-    it 'allocates ports to users' do
-      expect(ParallelCalabash::IosHelper.new([], {}, {USERS:['a', 'b'], INIT:'foo'}, '')
-                 .compute_simulators)
-          .to eq [{USER:'a', INIT:'foo', CALABASH_SERVER_PORT: 28000},
-                  {USER:'b', INIT:'foo', CALABASH_SERVER_PORT: 28001}]
-    end
-
-    it 'allocates other ports to users' do
-      expect(ParallelCalabash::IosHelper.new([], {}, {USERS:['a', 'b'], INIT:'foo', CALABASH_SERVER_PORT:100}, '')
-                 .compute_simulators)
-          .to eq [{USER:'a', INIT:'foo', CALABASH_SERVER_PORT: 100},
-                  {USER:'b', INIT:'foo', CALABASH_SERVER_PORT: 101}]
-    end
-  end
-
-  describe :test_compute_devices do
-    it 'returns nothing with no users' do
-      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}]}, 'name [udid]')
-                 .compute_devices)
-          .to eq []
-    end
-
-    it 'fails with no devices' do
-      expect { ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
-                                                        USERS: ['a']}, 'name [udon\'t]')
-                   .compute_devices }
-          .to raise_error(RuntimeError)
-    end
-
-    it 'allocates users to devices' do
-      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
-                                                      USERS: ['a', 'b']}, 'name [udid]')
-                 .compute_devices)
-          .to eq [{DEVICE_TARGET: "udid", USER: "a", INIT: ""}]
-    end
-
-    it 'allocates users init to devices' do
-      expect(ParallelCalabash::IosHelper.new([], {}, {DEVICES: [{DEVICE_TARGET: 'udid'}],
-                                                      USERS: ['a', 'b'],
-                                                      INIT: 'start'}, 'name [udid]')
-                 .compute_devices)
-          .to eq [{DEVICE_TARGET: "udid", USER: "a", INIT: "start"}]
-    end
-  end
 end
