@@ -83,14 +83,20 @@ module ParallelCalabash
         %x( cucumber #{options[:cucumber_options]} --dry-run -f json --out parallel_calabash_dry_run.json #{options[:feature_folder].join(' ')} )
       end
 
-      def feature_files_in_folder(feature_dir)
-        if File.directory?(feature_dir.first)
-          files = Dir[File.join(feature_dir, "**{,/*/**}/*")].uniq
+      def feature_files_in_folder(feature_dir_or_file)
+        if File.directory?(feature_dir_or_file.first)
+          files = Dir[File.join(feature_dir_or_file, "**{,/*/**}/*")].uniq
           files.grep(/\.feature$/)
-        elsif File.file?(feature_dir.first)
-          scenarios = File.open(feature_dir.first).collect{ |line| line.split(' ') }
+        elsif feature_folder_has_single_feature?(feature_dir_or_file)
+          feature_dir_or_file
+        elsif File.file?(feature_dir_or_file.first)
+          scenarios = File.open(feature_dir_or_file.first).collect{ |line| line.split(' ') }
           scenarios.flatten
         end
+      end
+
+      def feature_folder_has_single_feature?(feature_dir)
+        feature_dir.first.include?('.feature')
       end
 
       def weight_of_feature(feature_file, weighing_factor)

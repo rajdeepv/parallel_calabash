@@ -54,6 +54,11 @@ describe ParallelCalabash::FeatureGrouper do
        ["spec/test_data/features/aaa.feature", "spec/test_data/features/bbb.feature", "spec/test_data/features/ccc.feature", "spec/test_data/features/ddd.feature", "spec/test_data/features/eee.feature", "spec/test_data/features/fff.feature"]]
     end
 
+    it 'should create 2 group for concurrent 2 processes if single feature file is given' do
+      expect(ParallelCalabash::FeatureGrouper.feature_groups({:feature_folder => ['spec/test_data/features/aaa.feature'], :concurrent => true}, 2)).to eq \
+      [["spec/test_data/features/aaa.feature"], ["spec/test_data/features/aaa.feature"]]
+    end
+
   end
 
   describe :feature_weight do
