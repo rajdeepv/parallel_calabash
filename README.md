@@ -7,8 +7,8 @@ https://www.youtube.com/watch?v=sK3s0txeJvc
 
 Run calabash-android or calabash-ios tests in parallel on multiple connected devices. This is inspired by parallel_tests  https://rubygems.org/gems/parallel_tests
 
-eg. bundle exec parallel_calabash --apk my.apk -o'--format pretty' features/ --serialize-stdout
-eg. bundle exec parallel_calabash --app my.app -o'--format pretty' features/ --serialize-stdout
+eg. Android: bundle exec parallel_calabash --apk my.apk -o'--format pretty' features/ --serialize-stdout  
+eg. iOS: bundle exec parallel_calabash --app my.app -o'--format pretty' features/ --serialize-stdout
 
 ## Installation
 
