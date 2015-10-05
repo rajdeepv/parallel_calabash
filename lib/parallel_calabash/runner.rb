@@ -60,13 +60,13 @@ module ParallelCalabash
 
     def command_for_test(process_number, base_command, apk_path, cucumber_options, test_files)
       cmd = [base_command, apk_path, cucumber_options, *test_files].compact*' '
-      device_id, device_info = @device_helper.device_for_process process_number
+      device_id, device_info, screenshot_prefix = @device_helper.device_for_process process_number
       env = {
           AUTOTEST: '1',
           ADB_DEVICE_ARG: device_id,
           DEVICE_INFO: device_info,
           TEST_PROCESS_NUMBER: (process_number+1).to_s,
-          SCREENSHOT_PATH: device_id.to_s + '_'
+          SCREENSHOT_PATH: screenshot_prefix
       }
       separator = (WINDOWS ? ' & ' : ';')
       exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}=#{v};export #{k}" }.join(separator)

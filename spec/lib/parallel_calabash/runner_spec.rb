@@ -6,7 +6,7 @@ describe ParallelCalabash::Runner do
   describe :command_for_process do
     it 'should return command with env variables' do
       adb_helper = MiniTest::Mock.new
-      adb_helper.expect(:device_for_process, ["4d00fa3cb814c03f", "GT_N7100"], [0])
+      adb_helper.expect(:device_for_process, ["4d00fa3cb814c03f", "GT_N7100", "4d00fa3cb814c03f_"], [0])
       expect(ParallelCalabash::AndroidRunner.new(adb_helper, true)
                  .command_for_test(0, 'base_command', 'some.apk', '-some -options', %w(file1 file2)))
           .to eq 'AUTOTEST=1;export AUTOTEST;ADB_DEVICE_ARG=4d00fa3cb814c03f;export ADB_DEVICE_ARG;'\

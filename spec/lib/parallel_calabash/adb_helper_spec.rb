@@ -50,6 +50,18 @@ describe ParallelCalabash::AdbHelper do
     end
   end
 
+  describe :connected_devices_with_model_info do
+
+    it 'should return device_id, device_name and screenshot_prefix details' do
+      adb_helper = ParallelCalabash::AdbHelper.new([])
+      def adb_helper.adb_devices_l
+        "List of devices attached \n192.168.57.101:5555    device product:vbox86p model:device2 device:vbox86p\n192.168.57.102:5555    device product:vbox86p model:device3 device:vbox86p\n\n"
+      end
+      expect(adb_helper.connected_devices_with_model_info).to eq [["192.168.57.101:5555", "device2", "192_168_57_101_"], ["192.168.57.102:5555", "device3", "192_168_57_102_"]]
+    end
+
+  end
+
 end
 
 describe ParallelCalabash::IosHelper do
