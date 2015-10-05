@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Rajdeep"]
   spec.email         = ["mail.rajvarma@gmail.com"]
   spec.summary       = %q{calabash android tests in parallel}
-  spec.description   = %q{Run different calabash android tests in parallel on different devices}
+  spec.description   = %q{Run different calabash android and iOS tests in parallel on different devices and simulators}
   spec.homepage      = "https://github.com/rajdeepv/parallel_calabash"
   spec.license       = "MIT"
 
