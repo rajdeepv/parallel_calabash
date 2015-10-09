@@ -44,9 +44,9 @@ module ParallelCalabash
       end
       
       # Device target changed in XCode 7, losing ' Simulator' for some reason.
-      device_info = device[:DEVICE] ? device_name : create_simulator(device_name, "#{device_simulator}", )
+      device_target = device[:DEVICE] ? device_name : create_simulator(device_name, "#{device_simulator}", )
       device_endpoint = device_endpoint || "http://localhost:#{device[:CALABASH_SERVER_PORT]}"
-      $stdout.print "#{process_number}>> Device: #{device_info} = #{device_name}\n"
+      $stdout.print "#{process_number}>> Device: #{device_target} = #{device_name}\n"
       $stdout.flush
 
       unless @skip_ios_ping_check
@@ -54,14 +54,15 @@ module ParallelCalabash
         pingable = system "ping -c 1 -o #{hostname}"
         fail "Cannot ping device_endpoint host: #{hostname}" unless pingable
       end
-      initializer_cmd = "open -n `xcode-select -p`/Applications/iOS\\ Simulator.app --args -CurrentDeviceUDID #{device_info}"
+      initializer_cmd = "open -n `xcode-select -p`/Applications/iOS\\ Simulator.app --args -CurrentDeviceUDID #{device_target}"
+      install_cmd = "xcrun simctl install '#{device_target}' '#{process_app}'"
       cmd = [base_command, "APP_BUNDLE_PATH=#{process_app}", cucumber_options, *test_files].compact*' '
 
       env = {
           AUTOTEST: '1',
           DEVICE_ENDPOINT: device_endpoint,
-          DEVICE_TARGET: device_name,
-          DEVICE_INFO: device_info,
+          DEVICE_TARGET: device_target,
+          DEVICE_INFO: device_name,
           # 'DEBUG_UNIX_CALLS' => '1',
           TEST_PROCESS_NUMBER: (process_number+1).to_s,
           SCREENSHOT_PATH: "PCal_#{process_number+1}_",
@@ -70,7 +71,7 @@ module ParallelCalabash
       env['BUNDLE_ID'] = ENV['BUNDLE_ID'] if ENV['BUNDLE_ID']
       exports = env.map { |k, v| WINDOWS ? "(SET \"#{k}=#{v}\")" : "#{k}='#{v}';export #{k}" }.join(separator)
 
-      cmd = [ exports, initializer_cmd, "cd #{File.absolute_path('.')}", "umask 002", cmd].join(separator)
+      cmd = [ exports, initializer_cmd, install_cmd, "cd #{File.absolute_path('.')}", "umask 002", cmd].join(separator)
 
       "bash -c \"#{cmd}\" 2>&1"
     end
