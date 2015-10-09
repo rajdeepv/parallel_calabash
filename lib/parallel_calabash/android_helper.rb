@@ -8,17 +8,25 @@ module ParallelCalabash
       @filter = filter
     end
 
+    def adb_devices_l
+      `adb devices -l`
+    end
+
     def connected_devices_with_model_info
       begin
         list =
-            `adb devices -l`.split("\n").collect do |line|
+            adb_devices_l.split("\n").collect do |line|
               device = device_id_and_model(line)
               filter_device(device)
             end
-        list.compact
+        list.compact.each { |device_data| device_data << screenshot_prefix(device_data.first) }
       rescue
         []
       end
+    end
+
+    def screenshot_prefix device_id
+      device_id.gsub('.', '_').gsub(/:(.*)/, '').to_s + '_'
     end
 
     def device_id_and_model line
