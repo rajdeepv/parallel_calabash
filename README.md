@@ -1,5 +1,7 @@
 # calabash parallel execution
 
+[![Build Status](https://travis-ci.org/rajdeepv/parallel_calabash.svg?branch=master)](https://travis-ci.org/rajdeepv/parallel_calabash)
+
 ## Watch a quick demo here:
 
 https://www.youtube.com/watch?v=sK3s0txeJvc
