@@ -21,7 +21,6 @@ module ParallelCalabash
         configs = apply_filter(compute_devices)
         fail '** No devices unfiltered!' if configs.empty?
       else
-        %x( killall "iOS Simulator" )
         configs = apply_filter(compute_simulators)
         configs = configs.empty? ? [@default_simulator] : configs
       end
