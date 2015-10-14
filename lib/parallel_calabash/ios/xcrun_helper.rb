@@ -25,7 +25,7 @@ module ParallelCalabash
       end
 
       def self.try_stop_simulator device_uuid, state
-        if state =~ /booted/
+        if state.downcase =~ /booted/
           %x( xcrun simctl shutdown #{device_uuid})
           pids = %x(ps -e | grep #{device_uuid})
           if pids.match(self.sim_name)
@@ -56,25 +56,25 @@ module ParallelCalabash
         unless @is_device
           %x( open -na "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
           %x( instruments -w #{@simulator_uuid})
-          %x( xcrun simctl install '#{@simulator_uuid}' '#{@env["APP_BUNDLE_PATH"]}' )
+          %x( xcrun simctl install '#{@simulator_uuid}' '#{@env[:APP_BUNDLE_PATH]}' )
           launch_app
         end
       end
 
       def launch_app
-        app_bundle_id = ::RunLoop::PlistBuddy.new.plist_read('CFBundleIdentifier', @env["APP_BUNDLE_PATH"] + '/Info.plist')
+        app_bundle_id = ::RunLoop::PlistBuddy.new.plist_read('CFBundleIdentifier', @env[:APP_BUNDLE_PATH] + '/Info.plist')
         pid = %x( xcrun simctl launch #{@simulator_uuid} #{app_bundle_id} )
-        if pid != "" && env != nil
-          env["APP_PID_INFO"] = pid
-          env["NO_LAUNCH"] = '1'
+        if pid != "" && @env != nil
+          @env[:APP_PID_INFO] = pid.strip
+          @env[:NO_LAUNCH] = '1'
         end
         pid
       end
 
       def set_env_vars_if_needed
         unless @is_device
-          @env['DEVICE_TARGET'] = device_instruments_target(@simulator_uuid)
-          @env['SIMULATOR_UUID'] = @simulator_uuid
+          @env[:DEVICE_TARGET] = device_instruments_target(@simulator_uuid)
+          @env[:SIMULATOR_UUID] = @simulator_uuid
         end
       end
 

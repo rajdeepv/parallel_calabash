@@ -5,8 +5,10 @@ require 'parallel_calabash/android_helper'
 require 'parallel_calabash/ios_helper'
 require 'parallel_calabash/android_runner'
 require 'parallel_calabash/ios_runner'
+require 'parallel_calabash/ios/xcrun_helper'
 require 'parallel_calabash/feature_grouper'
 require 'parallel_calabash/result_formatter'
+require 'parallel_calabash/connectivity'
 require 'rbconfig'
 
 module ParallelCalabash
