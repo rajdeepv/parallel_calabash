@@ -51,6 +51,7 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
     -v, --version                    Show version
         --app app_path               app file path
         --device_target target       ios target if no .parallel-calabash config
+        --num_emulators number       number of parallel ios emulators to launch for same user (SSH running will be avoided)
         --device_endpoint endpoint   ios endpoint if no .parallel-calabash config
         --simulator type             for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'
         --ios_config file            for ios, configuration for devices and users
@@ -67,7 +68,16 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 ### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
-* Create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
+* For basic setup, use the below config and launch the parallel tests
+
+As follows:
+
+    {
+      NO_OF_DEVICES: 3,
+      DEVICE_TARGET: "'iPhone 5s' '8.4'"
+    }
+
+* For different user based control, create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
 * As the main user, the one that runs parallel_calabash, create ~/.parallel_calabash.iphonesimulator and/or ~/.parallel_calabash.iphoneos
 
 As follows:
