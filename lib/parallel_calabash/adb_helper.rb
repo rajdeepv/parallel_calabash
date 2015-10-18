@@ -66,7 +66,7 @@ module ParallelCalabash
         else
           @config = File.exist?(config_file) ? eval(File.read(config_file)) : {}
       end
-      @no_of_devices = @default_simulator[:num_emulators].to_i || @config[:NO_OF_DEVICES].to_i
+      @no_of_devices = (@default_simulator[:num_emulators] || @config[:NO_OF_DEVICES]).to_i
       @instruments = instruments || %x(instruments -s devices ; echo) # Bizarre workaround for xcode 7
     end
 

@@ -40,8 +40,7 @@ module ParallelCalabash
 
       def self.create_simulator(device_name, ssh, simulator)
         stop_and_remove(device_name, ssh)
-
-        device_info = %x( #{ssh} "xcrun simctl create \"#{device_name}\" #{simulator}" ).strip
+        device_info = %x( #{ssh} "xcrun simctl create '#{device_name}' #{simulator}" ).strip
         fail "Failed to create #{device_name} for #{simulator}" unless device_info
         device_info
       end
