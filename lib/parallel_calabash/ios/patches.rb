@@ -3,6 +3,13 @@ class <<RunLoop::SimControl
     puts "Patched!!"
   end
 end
+
+class <<RunLoop::CoreSimulator
+  def quit_simulator
+    puts "Patched!!"
+  end
+end
+
 class RunLoop::SimControl
   remove_method :ensure_accessibility, :ensure_software_keyboard
   def ensure_accessibility device
