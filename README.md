@@ -68,14 +68,8 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 ### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
-* For basic setup, use the below config and launch the parallel tests
-
-As follows:
-
-    {
-      NO_OF_DEVICES: 3,
-      DEVICE_TARGET: "'iPhone 5s' '8.4'"
-    }
+* For basic run, use the below command and launch the parallel tests
+parallel_calabash -app my.app --num_emulators 3 --simulator 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4' -o '-cucumber -opts' -r '-cucumber -reports>' features/
 
 * For different user based control, create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
 * As the main user, the one that runs parallel_calabash, create ~/.parallel_calabash.iphonesimulator and/or ~/.parallel_calabash.iphoneos
