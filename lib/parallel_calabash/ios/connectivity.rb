@@ -22,7 +22,7 @@ module ParallelCalabash
             end
           rescue TimeoutErr => e
             puts 'Timed out... exiting'
-            stop
+            break
           end
         end
       end
