@@ -53,9 +53,11 @@ module ParallelCalabash
 
       def start_simulator_and_app_if_needed
         unless @is_device
-          %x( open -na "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
-          %x( instruments -w #{@simulator_uuid})
+          %x( xcrun simctl boot '#{@simulator_uuid}' )
           %x( xcrun simctl install '#{@simulator_uuid}' '#{@env[:APP_BUNDLE_PATH]}' )
+          %x( xcrun simctl shutdown '#{@simulator_uuid}' )
+          %x( open -na "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
+          %x( instruments -w '#{@simulator_uuid}' )
           launch_app
         end
       end
