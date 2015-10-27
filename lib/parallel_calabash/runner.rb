@@ -99,7 +99,7 @@ module ParallelCalabash
 
       o = execute_command_for_process(process_number, test)
       device = @device_helper.device_for_process process_number
-      log = "/tmp/PCal-#{device[:USER]}.process_number"
+      log = "/tmp/PCal-#{device[:USER]}.#{process_number}"
       puts "Writing log #{log}"
       open(log, 'w') { |file| file.print o[:stdout] }
       o
