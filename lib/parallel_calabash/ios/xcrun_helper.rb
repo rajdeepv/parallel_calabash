@@ -56,20 +56,19 @@ module ParallelCalabash
           %x( xcrun simctl boot '#{@simulator_uuid}' )
           %x( xcrun simctl install '#{@simulator_uuid}' '#{@env[:APP_BUNDLE_PATH]}' )
           %x( xcrun simctl shutdown '#{@simulator_uuid}' )
-          %x( open -na "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
-          %x( instruments -w '#{@simulator_uuid}' )
+          %x( xcrun open -n -g -a "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
+          %x( mkdir -p ./.run-loop/#{@simulator_uuid} )
           launch_app
         end
       end
 
       def launch_app
-        app_bundle_id = ::RunLoop::PlistBuddy.new.plist_read('CFBundleIdentifier', @env[:APP_BUNDLE_PATH] + '/Info.plist')
-        pid = %x( xcrun simctl launch #{@simulator_uuid} #{app_bundle_id} )
-        if pid != "" && @env != nil
-          @env[:APP_PID_INFO] = pid.strip
-          @env[:NO_LAUNCH] = '1'
-        end
-        pid
+        %x( instruments -w '#{@simulator_uuid}' \
+            -D './.run-loop/#{@simulator_uuid}/instrument.trace' \
+            -t Automation '#{@env[:APP_BUNDLE_PATH]}' \
+            -e UIASCRIPT '#{File.join(File.dirname(__FILE__),"../../../misc/startup_popup_close.js")}' \
+            -e UIARESULTSPATH ./.run-loop/#{@simulator_uuid} \
+            >& ./.run-loop/#{@simulator_uuid}/run-loop.out )
       end
 
       def set_env_vars_if_needed
@@ -77,6 +76,7 @@ module ParallelCalabash
           @env[:DEVICE_TARGET] = device_instruments_target(@simulator_uuid)
           @env[:SIMULATOR_UUID] = @simulator_uuid
         end
+        @env[:NO_LAUNCH] = '1'
       end
 
       private

@@ -23,7 +23,7 @@ class RunLoop::SimControl
     puts "patched ensure_software_keyboard"
   end
 
-  def quit_sim
+  def quit_sim opts={}
     puts "Patched quit_sim"
   end
 end
