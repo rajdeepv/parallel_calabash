@@ -187,7 +187,7 @@ module ParallelCalabash
       FileUtils.chmod('g+w', '.')
 
       #remove run loop files if any
-      FileUtils.rm_rf(".run-loop")
+      FileUtils.rm_rf("~/.parallel-loop")
     end
 
     def create_simulator(device_name, ssh, simulator)

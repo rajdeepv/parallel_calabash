@@ -57,18 +57,18 @@ module ParallelCalabash
           %x( xcrun simctl install '#{@simulator_uuid}' '#{@env[:APP_BUNDLE_PATH]}' )
           %x( xcrun simctl shutdown '#{@simulator_uuid}' )
           %x( xcrun open -n -g -a "#{XcrunHelper.sim_name}" --args -CurrentDeviceUDID #{@simulator_uuid} )
-          %x( mkdir -p ./.run-loop/#{@simulator_uuid} )
+          %x( mkdir -p ~/.parallel-loop/#{@simulator_uuid} )
           launch_app
         end
       end
 
       def launch_app
         %x( instruments -w '#{@simulator_uuid}' \
-            -D './.run-loop/#{@simulator_uuid}/instrument.trace' \
+            -D '~/.parallel-loop/#{@simulator_uuid}/instrument.trace' \
             -t Automation '#{@env[:APP_BUNDLE_PATH]}' \
             -e UIASCRIPT '#{File.join(File.dirname(__FILE__),"../../../misc/startup_popup_close.js")}' \
-            -e UIARESULTSPATH ./.run-loop/#{@simulator_uuid} \
-            >& ./.run-loop/#{@simulator_uuid}/run-loop.out )
+            -e UIARESULTSPATH ~/.parallel-loop/#{@simulator_uuid} \
+            >& ~/.parallel-loop/#{@simulator_uuid}/run-loop.out )
       end
 
       def set_env_vars_if_needed
