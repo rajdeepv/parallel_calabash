@@ -69,6 +69,7 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
 
 * iOS testing is only supported on MacOS hosts.
 * For basic run, use the below command and launch the parallel tests
+
     $ parallel_calabash -app my.app --num_emulators 3 --simulator 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4' -o '-cucumber -opts' -r '-cucumber -reports>' features/
 * You would require to add following code to your env.rb file
 
