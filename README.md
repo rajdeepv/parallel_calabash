@@ -64,7 +64,7 @@ Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneo
         --serialize-stdout                  Serialize stdout output, nothing will be written until everything is done
         --concurrent                        Run tests concurrently. Each test will run once on each device
         --group-by-scenarios                Distribute equally as per scenarios. This uses cucumber dry run
-        --ensure-tag-for-devices filter     Ensures specific tags are run on specified devices. Filter format example: '@device_a_or_b_specific:deviceAId,deviceBId' Flag be passed multiple times.
+    	--ensure-tag-for-devices filter     Ensures specific tags are run on specified devices. Filter format example: "@device_a_or_b_specific:deviceAId,deviceBId". Flag be passed multiple times.
 
 
 ### iOS set-up
