@@ -34,35 +34,38 @@ Usage: parallel_calabash [options]
 
 Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_here' features/
 
-    -h, --help                       Show this message
-    -v, --version                    Show version
-    -a, --apk apk_path               apk file path
-    -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
-    -f, --filter                     Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','
-    --serialize-stdout               Serialize stdout output, nothing will be written until everything is done
-    --group-by-scenarios             Distribute equally as per scenarios. This uses cucumber dry run
-    --concurrent                     Run tests concurrently. Each test will run once on each device.
+    -h, --help                          Show this message
+    -v, --version                       Show version
+    -a, --apk apk_path                  apk file path
+    -o, --cucumber_opts '[OPTIONS]'     execute with those cucumber options
+    -f, --filter                        Filter devices to run tests against using partial device id or model name matching. Multiple filters seperated by ','
+    --serialize-stdout                  Serialize stdout output, nothing will be written until everything is done
+    --group-by-scenarios                Distribute equally as per scenarios. This uses cucumber dry run
+    --concurrent                        Run tests concurrently. Each test will run once on each device.
+    --ensure-tag-for-devices filter     Ensures specific tags are run on specified devices. Filter format example: "@device_a_or_b_specific:deviceAId,deviceBId". Flag be passed multiple times.
 
 ## Usage iOS
 
 Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneos -o '-cucumber -opts' -r '-cucumber -reports>' features/
 
-    -h, --help                       Show this message
-    -v, --version                    Show version
-        --app app_path               app file path
-        --device_target target       ios target if no .parallel-calabash config
-        --device_endpoint endpoint   ios endpoint if no .parallel-calabash config
-        --simulator type             for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'
-        --ios_config file            for ios, configuration for devices and users
-    -d, --distribution-tag tag       divide features into groups as per occurrence of given tag
-    -f, --filter filter              Filter devices to run tests against keys or values in config. Multiple filters seperated by ','
-        --skip_ios_ping_check        Skip the connectivity test for iOS devices
-    -o, --cucumber_opts '[OPTIONS]'  execute with those cucumber options
-    -r '[REPORTS]',                  generate these cucumber reports (not during filtering)
-        --cucumber_reports
-        --serialize-stdout           Serialize stdout output, nothing will be written until everything is done
-        --concurrent                 Run tests concurrently. Each test will run once on each device
-        --group-by-scenarios         Distribute equally as per scenarios. This uses cucumber dry run
+    -h, --help                              Show this message
+    -v, --version                           Show version
+        --app app_path                      app file path
+        --device_target target              ios target if no .parallel-calabash config
+        --device_endpoint endpoint          ios endpoint if no .parallel-calabash config
+        --simulator type                    for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'
+        --ios_config file                   for ios, configuration for devices and users
+    -d, --distribution-tag tag              divide features into groups as per occurrence of given tag
+    -f, --filter filter                     Filter devices to run tests against keys or values in config. Multiple filters seperated by ','
+        --skip_ios_ping_check               Skip the connectivity test for iOS devices
+    -o, --cucumber_opts '[OPTIONS]'         execute with those cucumber options
+    -r '[REPORTS]',                         generate these cucumber reports (not during filtering)
+        --cucumber_reports      
+        --serialize-stdout                  Serialize stdout output, nothing will be written until everything is done
+        --concurrent                        Run tests concurrently. Each test will run once on each device
+        --group-by-scenarios                Distribute equally as per scenarios. This uses cucumber dry run
+        --ensure-tag-for-devices filter     Ensures specific tags are run on specified devices. Filter format example: '@device_a_or_b_specific:deviceAId,deviceBId' Flag be passed multiple times.
+
 
 ### iOS set-up
 

@@ -8,7 +8,7 @@ module ParallelCalabash
 
       def feature_groups(options, group_size, device_info=[])
         return concurrent_feature_groups(options[:feature_folder], group_size) if options[:concurrent]
-        return ensure_tag_for_device_scenario_groups(group_size, options, device_info) if options[:ensure_tag_for_devices]
+        return ensure_tag_for_device_scenario_groups(group_size, options, device_info) if options[:features_device_specific]
         return scenario_groups(group_size, options) if options[:group_by_scenarios]
         return feature_groups_by_weight(options[:feature_folder], group_size, options[:distribution_tag]) if options[:distribution_tag]
         feature_groups_by_feature_files(options[:feature_folder], group_size)
@@ -64,39 +64,38 @@ module ParallelCalabash
       end
 
       def ensure_tag_for_device_scenario_groups(group_size, options, device_info)
-        device_tag_filters = parse_device_tag_filters(options[:ensure_tag_for_devices])
+        device_tag_filters = parse_device_tag_filters(options[:features_device_specific])
         distribution_data = generate_distribution_data(options)
         groups = Array.new(group_size) { [] }
         device_info.map(&:first).each_with_index do |device_id, device_index|
           matching_tags = device_tag_filters.map do |tag, device_ids|
             tag unless device_ids.select { |curr_id| device_id.start_with?(curr_id) }.empty?
           end.compact
-          distribute_to_device_group_if_necessary(groups, device_index, distribution_data, matching_tags)
+          ensure_for_device_index_if_necessary(device_index, distribution_data, matching_tags)
         end
-        distribute_remaining_across_groups(groups, distribution_data)
+        distribute_across_groups_for_devices(groups, distribution_data)
         groups
       end
 
-      def distribute_to_device_group_if_necessary(groups, device_index, distribution_data, matching_tags)
+      def ensure_for_device_index_if_necessary(device_index, distribution_data, matching_tags)
         distribution_data.each do |feature|
-          feature_uri = feature['uri']
           feature_matched = tag_match(feature, matching_tags)
           feature['elements'].each do |scenario|
             scenario_matched = tag_match(scenario, matching_tags)
             if scenario['keyword'] == 'Scenario'
               if feature_matched || scenario_matched
-                add_test_to_device_group(groups[device_index], feature_uri, scenario)
+                ensure_for_device_index(device_index, scenario)
               end
             elsif scenario['keyword'] == 'Scenario Outline'
               if scenario['examples']
                 scenario['examples'].each do |example|
                   if tag_match(example, matching_tags) || feature_matched || scenario_matched
-                    add_test_to_device_group(groups[device_index], feature_uri, example)
+                    ensure_for_device_index(device_index, example)
                   end
                 end
               else
                 if feature_matched || scenario_matched
-                  add_test_to_device_group(groups[device_index], feature_uri, scenario)
+                  ensure_for_device_index(device_index, scenario)
                 end
               end
             end
@@ -104,34 +103,39 @@ module ParallelCalabash
         end
       end
 
-      def distribute_remaining_across_groups(groups, distribution_data)
-        distribution_data.each do |feature|
-          feature_uri = feature['uri']
-          feature['elements'].each do |scenario|
-            if scenario['keyword'] == 'Scenario'
-              distribute_unless_already(groups, feature_uri, scenario)
-            elsif scenario['keyword'] == 'Scenario Outline'
-              if scenario['examples']
-                scenario['examples'].each do |example|
-                  distribute_unless_already(groups, feature_uri, example)
+      def distribute_across_groups_for_devices(groups, distribution_data)
+        [true, false].each do |device_specific|
+          distribution_data.each do |feature|
+            feature_uri = feature['uri']
+            feature['elements'].each do |scenario|
+              if scenario['keyword'] == 'Scenario'
+                distribute_for_devices(groups, feature_uri, scenario, device_specific)
+              elsif scenario['keyword'] == 'Scenario Outline'
+                if scenario['examples']
+                  scenario['examples'].each do |example|
+                    distribute_for_devices(groups, feature_uri, example, device_specific)
+                  end
+                else
+                  distribute_for_devices(groups, feature_uri, scenario, device_specific)
                 end
-              else
-                distribute_unless_already(groups, feature_uri, scenario)
               end
             end
           end
         end
       end
 
-      def distribute_unless_already(groups, feature_uri, element)
-        groups.min_by(&:size) << "#{feature_uri}:#{element['line']}" unless element['distributed']
+      def distribute_for_devices(groups, feature_uri, element, device_specific)
+        if element['device-specific-indexes'] && device_specific
+          group = element['device-specific-indexes'].map { |device_index| groups[device_index] }.min_by(&:size)
+          group << "#{feature_uri}:#{element['line']}"
+        elsif !(element['device-specific-indexes'] || device_specific)
+          groups.min_by(&:size) << "#{feature_uri}:#{element['line']}"
+        end
       end
 
-      def add_test_to_device_group(device_group, feature_uri, element)
-        unless element['distributed']
-          device_group << "#{feature_uri}:#{element['line']}"
-          element['distributed'] = true
-        end
+      def ensure_for_device_index(device_index, element)
+        element['device-specific-indexes'] ||= []
+        element['device-specific-indexes'] << device_index
       end
 
       def tag_match(element, matching_tags)

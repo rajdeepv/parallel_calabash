@@ -142,9 +142,9 @@ describe ParallelCalabash::FeatureGrouper do
 
     it 'only distributes device-A-specific tags to device A' do
       opts = {
-          feature_folder: ['spec/test_data/features/ensure_tag_for_devices'],
+          feature_folder: ['spec/test_data/features_device_specific'],
           cucumber_options: '--tags @any_device,@device_specific',
-          ensure_tag_for_devices: ['@device_specific:deviceAId']
+          features_device_specific: ['@device_specific:deviceAId']
       }
       devices = [
           ['deviceAId', nil],
@@ -152,17 +152,17 @@ describe ParallelCalabash::FeatureGrouper do
       ]
       actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
       expected = [
-          ['spec/test_data/features/ensure_tag_for_devices/device_specific.feature:5', 'spec/test_data/features/ensure_tag_for_devices/device_specific.feature:9'],
-          ['spec/test_data/features/ensure_tag_for_devices/any_device.feature:4', 'spec/test_data/features/ensure_tag_for_devices/any_device.feature:7']
+          ['spec/test_data/features_device_specific/device_specific.feature:5', 'spec/test_data/features_device_specific/device_specific.feature:9'],
+          ['spec/test_data/features_device_specific/any_device.feature:4', 'spec/test_data/features_device_specific/any_device.feature:7']
       ]
       expect(actual).to eq(expected)
     end
 
     it 'only distributes device-B-specific tags to device B' do
       opts = {
-          feature_folder: ['spec/test_data/features/ensure_tag_for_devices'],
+          feature_folder: ['spec/test_data/features_device_specific'],
           cucumber_options: '--tags @any_device,@device_specific',
-          ensure_tag_for_devices: ['@device_specific:deviceBId']
+          features_device_specific: ['@device_specific:deviceBId']
       }
       devices = [
           ['deviceAId', nil],
@@ -170,17 +170,17 @@ describe ParallelCalabash::FeatureGrouper do
       ]
       actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
       expected = [
-          ['spec/test_data/features/ensure_tag_for_devices/any_device.feature:4', 'spec/test_data/features/ensure_tag_for_devices/any_device.feature:7'],
-          ['spec/test_data/features/ensure_tag_for_devices/device_specific.feature:5', 'spec/test_data/features/ensure_tag_for_devices/device_specific.feature:9']
+          ['spec/test_data/features_device_specific/any_device.feature:4', 'spec/test_data/features_device_specific/any_device.feature:7'],
+          ['spec/test_data/features_device_specific/device_specific.feature:5', 'spec/test_data/features_device_specific/device_specific.feature:9']
       ]
       expect(actual).to eq(expected)
     end
 
     it 'handles unmatched device filters' do
       opts = {
-          feature_folder: ['spec/test_data/features/ensure_tag_for_devices'],
+          feature_folder: ['spec/test_data/features_device_specific'],
           cucumber_options: '--tags @any_device',
-          ensure_tag_for_devices: ['@multiple:deviceXId,deviceYId']
+          features_device_specific: ['@multiple:deviceXId,deviceYId']
       }
       devices = [
           ['deviceAId', nil],
@@ -188,17 +188,17 @@ describe ParallelCalabash::FeatureGrouper do
       ]
       actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
       expected = [
-          ['spec/test_data/features/ensure_tag_for_devices/any_device.feature:4'],
-          ['spec/test_data/features/ensure_tag_for_devices/any_device.feature:7']
+          ['spec/test_data/features_device_specific/any_device.feature:4'],
+          ['spec/test_data/features_device_specific/any_device.feature:7']
       ]
       expect(actual).to eq(expected)
     end
 
-    it 'should not duplicate scenario distribution for tags with multiple supported devices' do
+    it 'handles multiple ensure filters' do
       opts = {
-          feature_folder: ['spec/test_data/features/ensure_tag_for_devices'],
-          cucumber_options: '--tags @multiple_matches',
-          ensure_tag_for_devices: ['@multiple:deviceAId,deviceBId']
+          feature_folder: ['spec/test_data/features_device_specific'],
+          cucumber_options: '--tags @any_device,@multiple_matches',
+          features_device_specific: ['@multiple:deviceAId', '@any_device:deviceBId']
       }
       devices = [
           ['deviceAId', nil],
@@ -206,8 +206,26 @@ describe ParallelCalabash::FeatureGrouper do
       ]
       actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
       expected = [
-          ['spec/test_data/features/ensure_tag_for_devices/multiple_devices.feature:5', 'spec/test_data/features/ensure_tag_for_devices/multiple_devices.feature:14'],
-          ['spec/test_data/features/ensure_tag_for_devices/multiple_devices.feature:18', 'spec/test_data/features/ensure_tag_for_devices/multiple_devices.feature:19']
+          ['spec/test_data/features_device_specific/multiple_devices.feature:5', 'spec/test_data/features_device_specific/multiple_devices.feature:14', 'spec/test_data/features_device_specific/multiple_devices.feature:18'],
+          ['spec/test_data/features_device_specific/any_device.feature:4', 'spec/test_data/features_device_specific/any_device.feature:7', 'spec/test_data/features_device_specific/multiple_devices.feature:19']
+      ]
+      expect(actual).to eq(expected)
+    end
+
+    it 'prioritises distribution of device-specific tags before non-specific tags' do
+      opts = {
+          feature_folder: ['spec/test_data/features_device_specific'],
+          cucumber_options: '--tags @multiple_matches',
+          features_device_specific: ['@multiple:deviceAId,deviceBId']
+      }
+      devices = [
+          ['deviceAId', nil],
+          ['deviceBId', nil]
+      ]
+      actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
+      expected = [
+          ['spec/test_data/features_device_specific/multiple_devices.feature:5', 'spec/test_data/features_device_specific/multiple_devices.feature:18'],
+          ['spec/test_data/features_device_specific/multiple_devices.feature:14', 'spec/test_data/features_device_specific/multiple_devices.feature:19']
       ]
       expect(actual).to eq(expected)
     end

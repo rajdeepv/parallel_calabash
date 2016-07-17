@@ -78,8 +78,8 @@ def parse_arguments(arguments)
     end
 
     opts.on('--ensure-tag-for-devices="@tag:device_filter"', 'Ensure certain tags only run on certain devices') do |device_tag_filter|
-      options[:ensure_tag_for_devices] ||= []
-      options[:ensure_tag_for_devices] << device_tag_filter
+      options[:features_device_specific] ||= []
+      options[:features_device_specific] << device_tag_filter
     end
 
   end
