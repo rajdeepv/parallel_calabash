@@ -128,8 +128,10 @@ module ParallelCalabash
       end
 
       def add_test_to_device_group(device_group, feature_uri, element)
-        device_group << "#{feature_uri}:#{element['line']}"
-        element['distributed'] = true
+        unless element['distributed']
+          device_group << "#{feature_uri}:#{element['line']}"
+          element['distributed'] = true
+        end
       end
 
       def tag_match(element, matching_tags)
