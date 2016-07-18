@@ -67,9 +67,9 @@ module ParallelCalabash
         device_tag_filters = parse_device_tag_filters(options[:features_device_specific])
         distribution_data = generate_distribution_data(options)
         groups = Array.new(group_size) { [] }
-        device_info.map(&:first).each_with_index do |device_id, device_index|
+        device_info.each_with_index do |device, device_index|
           matching_tags = device_tag_filters.map do |tag, device_ids|
-            tag unless device_ids.select { |curr_id| device_id.start_with?(curr_id) }.empty?
+            tag unless device_ids.select { |curr_id| (device.first || '').match(curr_id) || (device.last || '').match(curr_id) }.empty?
           end.compact
           ensure_for_device_index_if_necessary(device_index, distribution_data, matching_tags)
         end

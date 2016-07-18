@@ -198,10 +198,10 @@ describe ParallelCalabash::FeatureGrouper do
       opts = {
           feature_folder: ['spec/test_data/features_device_specific'],
           cucumber_options: '--tags @any_device,@multiple_matches',
-          features_device_specific: ['@multiple:deviceAId', '@any_device:deviceBId']
+          features_device_specific: ['@multiple:deviceNameA', '@any_device:deviceBId']
       }
       devices = [
-          ['deviceAId', nil],
+          [nil, 'deviceNameA'],
           ['deviceBId', nil]
       ]
       actual = ParallelCalabash::FeatureGrouper.ensure_tag_for_device_scenario_groups(devices.size, opts, devices)
