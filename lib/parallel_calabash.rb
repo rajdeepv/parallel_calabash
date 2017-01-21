@@ -49,7 +49,7 @@ module ParallelCalabash
       number_of_processes = number_of_processes_to_start
       test_results = nil
       report_time_taken do
-        groups = FeatureGrouper.feature_groups(@options, number_of_processes)
+        groups = FeatureGrouper.feature_groups(@options, number_of_processes, @helper.connected_devices_with_model_info)
         threads = groups.size
         puts "Running with #{threads} threads: #{groups}"
         complete = []

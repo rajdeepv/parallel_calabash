@@ -77,6 +77,11 @@ def parse_arguments(arguments)
       options[:group_by_scenarios] = true
     end
 
+    opts.on('--ensure-tag-for-devices="@tag:device_filter"', 'Ensure certain tags only run on certain devices') do |device_tag_filter|
+      options[:features_device_specific] ||= []
+      options[:features_device_specific] << device_tag_filter
+    end
+
   end
 
   opt_parser.parse!(arguments)
