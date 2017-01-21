@@ -45,7 +45,7 @@ Example: parallel_calabash -a my.apk -o 'cucumber_opts_like_tags_profile_etc_her
 
 ## Usage iOS
 
-Example: parallel_calabash -app my.app --ios_config ~/.parallel_calabash.iphoneos -o '-cucumber -opts' -r '-cucumber -reports>' features/
+Example: parallel_calabash --app my.app --ios_config ~/.parallel_calabash.iphoneos -o '-cucumber -opts' -r '-cucumber -reports>' features/
 
     -h, --help                       Show this message
     -v, --version                    Show version
