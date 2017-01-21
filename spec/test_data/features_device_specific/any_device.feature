@@ -1,9 +1,8 @@
-Feature: eee feature
+@any_device
+Feature: Can run on any device
 
-  @tag1
   Scenario:
     Given empty step
 
-  @tag1
   Scenario:
     Given empty step

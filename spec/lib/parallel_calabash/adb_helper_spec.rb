@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'minitest/mock'
 require 'parallel_calabash/adb_helper'
 describe ParallelCalabash::AdbHelper do
 
