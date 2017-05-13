@@ -1,3 +1,5 @@
+# PS: I am no longer maintaining this utility due to time constraints. Any pull requests or issues will not be attended
+
 # calabash parallel execution
 
 [![Build Status](https://travis-ci.org/rajdeepv/parallel_calabash.svg?branch=master)](https://travis-ci.org/rajdeepv/parallel_calabash)
