@@ -33,6 +33,10 @@ def parse_arguments(arguments)
       options[:device_target] = device_target
     end
 
+    opts.on('--num_emulators number', 'number of parallel ios emulators to launch for same user (SSH running will be avoided)') do |num_emulators|
+      options[:num_emulators] = num_emulators
+    end
+
     opts.on('--device_endpoint endpoint', 'ios endpoint if no .parallel-calabash config') do |device_endpoint|
       options[:device_endpoint] = device_endpoint
     end

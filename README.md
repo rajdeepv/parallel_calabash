@@ -53,6 +53,7 @@ Example: parallel_calabash --app my.app --ios_config ~/.parallel_calabash.iphone
     -v, --version                    Show version
         --app app_path               app file path
         --device_target target       ios target if no .parallel-calabash config
+        --num_emulators number       number of parallel ios emulators to launch for same user (SSH running will be avoided)
         --device_endpoint endpoint   ios endpoint if no .parallel-calabash config
         --simulator type             for simctl create, e.g. 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4'
         --ios_config file            for ios, configuration for devices and users
@@ -69,7 +70,20 @@ Example: parallel_calabash --app my.app --ios_config ~/.parallel_calabash.iphone
 ### iOS set-up
 
 * iOS testing is only supported on MacOS hosts.
-* Create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
+* For basic run, use the below command and launch the parallel tests
+```
+$ parallel_calabash -app my.app --num_emulators 3 --simulator 'com.apple.CoreSimulator.SimDeviceType.iPhone-6 com.apple.CoreSimulator.SimRuntime.iOS-8-4' -o '-cucumber -opts' -r '-cucumber -reports>' features/
+```
+* You would require to add following code to your env.rb file
+
+```ruby
+if ENV["TEST_PROCESS_NUMBER"]
+  require 'parallel_calabash/ios/patches'
+  launcher.relaunch(timeout: 90, relaunch_simulator: false, quit_sim_on_init: false)
+end
+```
+
+* For different user based control, create as many (Administrator-privileged!) test accounts as you have devices or want simulators (Settings > Users & Groups)
 * As the main user, the one that runs parallel_calabash, create ~/.parallel_calabash.iphonesimulator and/or ~/.parallel_calabash.iphoneos
 
 As follows:

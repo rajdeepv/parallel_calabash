@@ -22,6 +22,7 @@ module ParallelCalabash
                       {
                           DEVICE_TARGET: options[:device_target],
                           DEVICE_ENDPOINT: options[:device_endpoint],
+                          num_emulators: options[:num_emulators]
                       },
                       options[:ios_config]
                   )

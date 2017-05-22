@@ -66,6 +66,7 @@ module ParallelCalabash
         else
           @config = File.exist?(config_file) ? eval(File.read(config_file)) : {}
       end
+      @no_of_devices = (@default_simulator[:num_emulators] || @config[:NO_OF_DEVICES]).to_i
       @instruments = instruments || %x(instruments -s devices ; echo) # Bizarre workaround for xcode 7
     end
 
@@ -78,11 +79,25 @@ module ParallelCalabash
       if @config[:DEVICES]
         configs = apply_filter(compute_devices)
         fail '** No devices (or users) unfiltered!' if configs.empty?
+      elsif @no_of_devices > 0
+        configs = compute_simulators_to_create
       else
         configs = apply_filter(compute_simulators)
         configs = configs.empty? ? [@default_simulator] : configs
       end
       @devices = configs
+    end
+
+    def compute_simulators_to_create
+      port = (@config[:CALABASH_SERVER_PORT] || 28000).to_i
+      simulator = @config[:DEVICE_TARGET] || nil
+      (1..@no_of_devices).map do |i|
+        {}.tap do |my_hash|
+          my_hash[:SIMULATOR] = simulator unless simulator.nil?
+          my_hash[:DEVICE_NAME] = "PCalSimulator_#{i}"
+          my_hash[:CALABASH_SERVER_PORT] = port + i - 1
+        end
+      end
     end
 
     def compute_simulators
